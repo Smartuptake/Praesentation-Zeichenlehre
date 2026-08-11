@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quiz 2 · Mandarin Maverick</title>
+
+<!--
+  Mandarin Maverick – Fast Track Chinese
+  Quiz 2 zur Präsentation „Einführung in die chinesische Zeichenlehre“
+
+  Stufe 2 · mittel. Gefragt wird der Folieninhalt und zusätzlich der
+  Kurztext der Lesekästen — also die erste Ebene der „zusätzlichen Info“.
+  Aufbau und Auswertung übernimmt quiz.js.
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap">
+<link rel="stylesheet" href="quiz.css">
+</head>
+
+<body>
+
+<header class="q-kopf">
+  <div class="q-kopf-innen">
+    <img src="assets/logo/mm-logo-symbol-color.png" alt="Mandarin Maverick">
+    <div>
+      <h1 id="q-titel"></h1>
+      <p id="q-untertitel"></p>
+      <span class="q-stufe" id="q-stufe"></span>
+    </div>
+    <a class="q-zurueck" href="index.html">← zur Präsentation</a>
+  </div>
+</header>
+
+<main id="q-fragen"></main>
+
+<div class="q-leiste">
+  <div class="q-leiste-innen">
+    <button type="button" class="q-knopf" id="q-auswerten">Auswerten</button>
+    <button type="button" class="q-knopf q-knopf--leer" id="q-neu" hidden>Noch einmal</button>
+    <span class="q-offen" id="q-offen"></span>
+    <span class="q-ergebnis" id="q-ergebnis"></span>
+    <div class="q-balken" id="q-balken"><span></span></div>
+  </div>
+</div>
+
+<script>
+const QUIZ = {
+  titel: 'Quiz 2 · Folien und Infokasten',
+  untertitel: 'Folieninhalt und die Kurztexte aus den Lesekästen.',
+  stufe: 2,
+  fragen: [
+
+    {
+      typ: 'mc',
+      frage: 'Warum spricht die Forschung bei den Jiǎhú-Zeichen vorsichtiger von <em>Proto-Schrift</em>?',
+      optionen: [
+        'Belegt sind nur rund 16 eingeritzte Markierungen.',
+        'Es fehlen Zeichenreihen, Wiederholungen und ein erkennbares System.',
+        'Ob sie überhaupt Sprache abbilden, ist ungeklärt.',
+        'Die Funde sind erst im 20. Jahrhundert gefälscht worden.'
+      ],
+      richtig: [0, 1, 2],
+      erklaerung: 'Von Fälschung ist nirgends die Rede. Das Problem ist die dünne Beleglage: 16 Markierungen ergeben kein System.'
+    },
+
+    {
+      typ: 'rf',
+      frage: 'Der namengebende Fundort der Vinča-Zeichen ist heute ein Vorort von Belgrad.',
+      richtig: true,
+      erklaerung: 'Vinča liegt bei Belgrad, der Hauptstadt Serbiens. 85 % der Funde tragen nur ein einziges Zeichen — deshalb ist der Schriftcharakter umstritten.'
+    },
+
+    {
+      typ: 'luecke',
+      frage: 'Die ägyptische Eigenbezeichnung der Hieroglyphen lautete <em>mdw nṯr</em>.',
+      satz: 'Übersetzt heißt das „___“ — die Schrift galt als Gabe des Gottes Thot.',
+      loesung: ['Gottesworte', 'Gottes Worte', 'Worte Gottes'],
+      erklaerung: 'Der griechische Name <em>hieroglyphiká grámmata</em> bedeutet dagegen „heilige eingeritzte Zeichen“.'
+    },
+
+    {
+      typ: 'mc',
+      frage: 'Wie viele Zeichen hatten das ugaritische und das phönizische Alphabet?',
+      optionen: [
+        'Ugarit 22 Zeichen, Phönizien 30 Zeichen',
+        'Ugarit 30 Zeichen, Phönizien 22 Zeichen',
+        'Beide 26 Zeichen',
+        'Ugarit 30 Zeichen, Phönizien 26 Zeichen'
+      ],
+      richtig: [1],
+      erklaerung: 'Ugarit um 1500 v. Chr.: 30 Keilschriftzeichen. Das phönizische Abjad ab ca. 1050 v. Chr.: 22 Zeichen, keine Vokale.'
+    },
+
+    {
+      typ: 'zuordnung',
+      frage: 'Ordne die vier Schriftzeugnisse zu.',
+      ziele: [
+        'Keilschrift',
+        'Hieroglyphen',
+        'Orakelknochenschrift <span class="hanzi">甲骨文</span>',
+        'Ugaritische Zeichentafel'
+      ],
+      karten: [
+        { bild: 'bilder/Mesopotanische-Keilschrift.png', alt: 'Zeugnis A',
+          text: 'Zeugnis A', ziel: 'Keilschrift' },
+        { bild: 'bilder/Hieroglyphen.jpg', alt: 'Zeugnis B',
+          text: 'Zeugnis B', ziel: 'Hieroglyphen' },
+        { bild: 'bilder/Orakelknochen.png', alt: 'Zeugnis C',
+          text: 'Zeugnis C', ziel: 'Orakelknochenschrift 甲骨文' },
+        { bild: 'bilder/Ugaritic-alphabet-chart.png', alt: 'Zeugnis D',
+          text: 'Zeugnis D', ziel: 'Ugaritische Zeichentafel' }
+      ],
+      erklaerung: 'Ton, Stein, Knochen und wieder Ton — jedes Material hat der Schrift eine andere Form gegeben.'
+    },
+
+    {
+      typ: 'luecke',
+      frage: 'Die ersten beiden Buchstaben gaben dem Alphabet seinen Namen.',
+      satz: '<em>ʾaleph</em> (griechisch <em>alpha</em>) bedeutete „Rind“, <em>bet</em> (griechisch <em>beta</em>) bedeutete „___“.',
+      loesung: ['Haus'],
+      erklaerung: 'Beide Namen zeigen die Herkunft aus Bildzeichen — das A ist bis heute ein umgedrehter Rinderkopf.'
+    },
+
+    {
+      typ: 'mc',
+      frage: 'Woher stammt der zweite Name der Bronzeschrift, <span class="hanzi">钟鼎文</span> <span class="pinyin">zhōngdǐngwén</span>?',
+      optionen: [
+        'Von den Städten, in denen die Gefäße gefunden wurden',
+        'Von den Glocken <span class="hanzi">钟</span> <span class="pinyin">zhōng</span> und Opferkesseln <span class="hanzi">鼎</span> <span class="pinyin">dǐng</span>, auf denen sie steht',
+        'Vom Namen des Königs, der sie einführte',
+        'Von der Legierung, aus der die Gefäße bestehen'
+      ],
+      richtig: [1],
+      erklaerung: 'Die Inschriften dienten Opferzeremonien und dem Ahnenkult. Etwa 5.000–6.000 Zeichenformen sind gesammelt.'
+    },
+
+    {
+      typ: 'rf',
+      frage: 'Von der Orakelknochenschrift sind etwa <strong>4.500</strong> verschiedene Zeichen belegt.',
+      richtig: true,
+      erklaerung: 'Viele davon sind Piktogramme. Sie stellen die heutigen Zeichen in ihrer ursprünglichen Form dar.'
+    },
+
+    {
+      typ: 'reihenfolge',
+      frage: 'Bringe die Wörterbücher in die Reihenfolge ihres Erscheinens.',
+      elemente: [
+        '<span class="hanzi">说文解字</span> <span class="pinyin">Shuōwén jiězì</span> — 100 n. Chr., 9.353 Zeichen',
+        '<span class="hanzi">康熙字典</span> <span class="pinyin">Kāngxī zìdiǎn</span> — 1716, ca. 47.000 Zeichen',
+        '<span class="hanzi">汉语大字典</span> <span class="pinyin">Hànyǔ dà zìdiǎn</span> — 1990, 54.678 Zeichen',
+        '<span class="hanzi">中华字海</span> <span class="pinyin">Zhōnghuá zìhǎi</span> — 1994, 85.568 Zeichen'
+      ],
+      erklaerung: 'Der Bestand wächst, der Gebrauch nicht: Rund 85 % dieser Zeichen sind heute außer Gebrauch.'
+    },
+
+    {
+      typ: 'mc',
+      frage: 'Welche Anteile nennen die Lesekästen für die Kategorien der Zeichenbildung?',
+      optionen: [
+        'Piktogramme <span class="hanzi">象形</span>: rund 2–4 %',
+        'Zusammengesetzte Ideogramme <span class="hanzi">会意</span>: rund 2,8 %',
+        'Phonogramme <span class="hanzi">形声</span>: rund 90 %',
+        'Piktogramme <span class="hanzi">象形</span>: rund 40 %'
+      ],
+      richtig: [0, 1, 2],
+      erklaerung: 'Die Piktogramme sind wenige, aber tragend: Als Radikale und Komponenten stecken sie in fast allen zusammengesetzten Zeichen.'
+    },
+
+    {
+      typ: 'luecke',
+      frage: 'Ein klassisches Beispiel für <span class="hanzi">会意</span> <span class="pinyin">huìyì</span>.',
+      satz: '<span class="hanzi">休</span> <span class="pinyin">xiū</span> „ausruhen“ verbindet den Menschen <span class="hanzi">亻</span> mit dem ___ <span class="hanzi">木</span>.',
+      loesung: ['Baum', 'Holz'],
+      erklaerung: 'Ein Mensch, der sich an einen Baum lehnt. Ebenso <span class="hanzi">名</span> <span class="pinyin">míng</span> „Name“ aus Abend <span class="hanzi">夕</span> und Mund <span class="hanzi">口</span>: Im Dunkeln ruft man seinen Namen.'
+    },
+
+    {
+      typ: 'rf',
+      frage: 'Die Zahl der Radikale wurde im Lauf der Zeit <strong>vergrößert</strong>: von 214 im <span class="hanzi">说文解字</span> auf 540 im <span class="hanzi">康熙字典</span>.',
+      richtig: false,
+      erklaerung: 'Genau umgekehrt: von 540 im <span class="hanzi">说文解字</span> (121 n. Chr.) auf die 214, die das <span class="hanzi">康熙字典</span> von 1716 festschrieb. Kurzzeichen-Wörterbücher nutzen heute oft 224 oder 227.'
+    },
+
+    {
+      typ: 'mc',
+      frage: 'Aus welchen drei Teilen besteht ein chinesisches Wörterbuch?',
+      optionen: [
+        'Radikalverzeichnis <span class="hanzi">部首目录</span>, geordnet nach Strichzahl',
+        'Zeichenindex <span class="hanzi">检字表</span>, geordnet nach Reststrichzahl',
+        'Hauptteil mit den Stichworteinträgen',
+        'Grammatikanhang mit den Satzmustern'
+      ],
+      richtig: [0, 1, 2],
+      erklaerung: 'Ein Grammatikanhang gehört nicht dazu. Die drei Teile beantworten gemeinsam die Grundfrage: Wie finde ich ein Zeichen, dessen Aussprache ich nicht kenne?'
+    },
+
+    {
+      typ: 'reihenfolge',
+      frage: 'Wie bereitet man das Schreiben mit Pinsel und Tusche vor?',
+      elemente: [
+        'Den Reibstein <span class="hanzi">砚</span> säubern — er muss trocken und ohne Reste sein',
+        'Ein Löffelchen kaltes, klares Wasser in die Mulde geben',
+        'Den Tuscheriegel <span class="hanzi">墨</span> senkrecht halten und in ruhigen Kreisen anreiben',
+        'Den Pinsel <span class="hanzi">笔</span> wässern, am Steinrand ausstreichen und in eine Spitze drehen',
+        'Schreiben — senkrechter Pinsel, geführt aus Handgelenk und Arm',
+        'Den Pinsel auswaschen und hängend trocknen lassen'
+      ],
+      erklaerung: 'Das Anreiben dauert zwei bis fünf Minuten — und diese Minuten gehören zur Sache: Sie sind die Zeit, in der sich der Schreibende sammelt.'
+    }
+
+  ]
+};
+</script>
+<script src="quiz.js"></script>
+
+</body>
+</html>

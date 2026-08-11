@@ -1,0 +1,450 @@
+/* ==========================================================================
+   Mandarin Maverick – Fast Track Chinese
+   quiz.css · Übungsseiten zur Präsentation „Einführung in die chinesische
+   Zeichenlehre“
+   Basis: MM_Designhandbuch v1.4, Kap. 3 (Farbe), 4 (Typografie), 9 (Kästen)
+
+   Die Quizseiten sind keine Folien: Sie laufen im normalen Dokumentfluss und
+   werden gescrollt. Die Tokens sind deshalb hier eigens gesetzt und nicht aus
+   theme.css übernommen — dort hängen sie am 1920 × 1080-Raster.
+   ========================================================================== */
+
+:root {
+  --mm-turquoise:        #039A9A;
+  --mm-turquoise-dark:   #02736F;
+  --mm-turquoise-light:  #E6F5F5;
+  --mm-bordeaux:         #961B1D;
+
+  /* Sprachsemantik – nicht überschreiben (Kap. 3.3) */
+  --mm-pinyin:           #2271FF;
+  --mm-hanzi:            #C61919;
+  --mm-german:           #5C5C5C;
+  --mm-german-strong:    #111111;
+
+  --mm-bg:               #FFFFFF;
+  --mm-rule-light:       #E3E6E8;
+
+  --mm-correct:          #0E8A44;
+  --mm-correct-light:    #EAF6EF;
+  --mm-wrong:            #961B1D;
+  --mm-wrong-light:      #FBEDED;
+
+  --mm-font-latin:   "Helvetica Neue", Helvetica, Arial, "Noto Sans", sans-serif;
+  --mm-font-hanzi:   "Kaiti SC", "STKaiti", "KaiTi", "Noto Serif SC",
+                     "Songti SC", serif;
+
+  --mm-lh-de:     1.45;
+  --mm-radius:    8px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--mm-bg);
+  color: var(--mm-german);
+  font-family: var(--mm-font-latin);
+  font-size: 17px;
+  line-height: var(--mm-lh-de);
+}
+
+/* Sprachsemantik gilt auch hier ausnahmslos. */
+.hanzi  { color: var(--mm-hanzi);  font-family: var(--mm-font-hanzi); }
+.pinyin { color: var(--mm-pinyin); font-style: italic; }
+.strong { color: var(--mm-german-strong); font-weight: 700; }
+
+/* --------------------------------------------------------------------------
+   Kopf
+   -------------------------------------------------------------------------- */
+
+.q-kopf {
+  border-bottom: 2px solid var(--mm-rule-light);
+  padding: 28px 24px 22px;
+}
+
+.q-kopf-innen {
+  max-width: 920px;
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.q-kopf img { height: 54px; width: auto; flex: 0 0 auto; }
+
+.q-kopf h1 {
+  margin: 0;
+  color: var(--mm-turquoise);
+  font-size: 30px;
+  line-height: 1.2;
+}
+
+.q-kopf p {
+  margin: 6px 0 0;
+  font-size: 16px;
+}
+
+.q-zurueck {
+  margin-left: auto;
+  flex: 0 0 auto;
+  border: 2px solid var(--mm-turquoise);
+  border-radius: 999px;
+  color: var(--mm-turquoise);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  padding: 9px 16px;
+  white-space: nowrap;
+}
+
+.q-zurueck:hover { background: var(--mm-turquoise-light); }
+
+/* Schwierigkeitsgrad als drei Punkte, gefüllt nach Stufe. */
+.q-stufe {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.q-stufe i {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 2px solid var(--mm-turquoise);
+}
+
+.q-stufe i.voll { background: var(--mm-turquoise); }
+
+/* --------------------------------------------------------------------------
+   Fragen
+   -------------------------------------------------------------------------- */
+
+main { max-width: 920px; margin: 0 auto; padding: 28px 24px 160px; }
+
+.q-frage {
+  border: 2px solid var(--mm-rule-light);
+  border-radius: var(--mm-radius);
+  padding: 22px 26px;
+  margin-bottom: 22px;
+  scroll-margin-top: 20px;
+}
+
+.q-kopfzeile {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.q-nr {
+  color: var(--mm-turquoise);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.q-art {
+  border: 1px solid var(--mm-rule-light);
+  border-radius: 999px;
+  color: var(--mm-german);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+}
+
+.q-text {
+  margin: 0 0 16px;
+  color: var(--mm-german-strong);
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.q-hinweis {
+  margin: -8px 0 14px;
+  font-size: 15px;
+}
+
+/* Antwortmöglichkeiten ---------------------------------------------------- */
+
+.q-optionen { display: flex; flex-direction: column; gap: 10px; }
+
+.q-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border: 2px solid var(--mm-rule-light);
+  border-radius: var(--mm-radius);
+  background: var(--mm-bg);
+  padding: 12px 16px;
+  cursor: pointer;
+}
+
+.q-option:hover { border-color: var(--mm-turquoise); }
+
+.q-option input { margin: 3px 0 0; flex: 0 0 auto; accent-color: var(--mm-turquoise); }
+
+.q-option.gewaehlt { border-color: var(--mm-turquoise); background: var(--mm-turquoise-light); }
+
+/* Richtig/Falsch — zwei breite Schaltflächen nebeneinander. */
+.q-rf { display: flex; gap: 14px; }
+.q-rf .q-option { flex: 1 1 0; justify-content: center; font-weight: 700; }
+
+/* Lückentext -------------------------------------------------------------- */
+
+.q-luecke-satz { font-size: 19px; line-height: 1.8; color: var(--mm-german-strong); }
+
+.q-luecke-satz input {
+  border: 0;
+  border-bottom: 2px solid var(--mm-turquoise);
+  background: var(--mm-turquoise-light);
+  border-radius: 4px 4px 0 0;
+  color: var(--mm-german-strong);
+  font-family: inherit;
+  font-size: 18px;
+  padding: 4px 10px;
+  min-width: 190px;
+}
+
+.q-luecke-satz input:focus {
+  outline: 3px solid var(--mm-turquoise-dark);
+  outline-offset: 2px;
+}
+
+/* Reihenfolge ------------------------------------------------------------- */
+
+.q-reihe { display: flex; flex-direction: column; gap: 8px; }
+
+.q-reihe-zeile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 2px solid var(--mm-rule-light);
+  border-radius: var(--mm-radius);
+  background: var(--mm-bg);
+  padding: 10px 14px;
+  cursor: grab;
+}
+
+.q-reihe-zeile.zieht    { opacity: 0.4; }
+.q-reihe-zeile.ueber    { border-color: var(--mm-turquoise); background: var(--mm-turquoise-light); }
+
+.q-reihe-zeile .griff {
+  color: var(--mm-turquoise);
+  font-size: 18px;
+  line-height: 1;
+  flex: 0 0 auto;
+}
+
+.q-reihe-zeile .platz {
+  flex: 0 0 auto;
+  width: 26px;
+  color: var(--mm-turquoise);
+  font-weight: 700;
+}
+
+.q-reihe-zeile .inhalt { flex: 1 1 auto; }
+
+.q-reihe-zeile .schub { display: flex; gap: 4px; flex: 0 0 auto; }
+
+.q-reihe-zeile .schub button {
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--mm-rule-light);
+  border-radius: 6px;
+  background: var(--mm-bg);
+  color: var(--mm-turquoise);
+  cursor: pointer;
+  line-height: 1;
+}
+
+.q-reihe-zeile .schub button:hover { background: var(--mm-turquoise-light); }
+.q-reihe-zeile .schub button[disabled] { opacity: 0.25; cursor: default; }
+
+/* Zuordnung --------------------------------------------------------------- */
+
+.q-vorrat {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  border: 2px dashed var(--mm-rule-light);
+  border-radius: var(--mm-radius);
+  padding: 14px;
+  margin-bottom: 18px;
+  min-height: 96px;
+}
+
+.q-vorrat:empty::after {
+  content: "Alle zugeordnet";
+  color: var(--mm-german);
+  font-size: 15px;
+}
+
+.q-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  border: 2px solid var(--mm-rule-light);
+  border-radius: var(--mm-radius);
+  background: var(--mm-bg);
+  padding: 8px;
+  cursor: grab;
+  font-size: 14px;
+  text-align: center;
+  max-width: 150px;
+}
+
+.q-chip img { display: block; width: 120px; height: 90px; object-fit: contain; }
+.q-chip.zieht    { opacity: 0.4; }
+.q-chip.gewaehlt { border-color: var(--mm-turquoise); background: var(--mm-turquoise-light); }
+
+.q-ziele { display: grid; grid-template-columns: repeat(auto-fit, minmax(168px, 1fr)); gap: 14px; }
+
+.q-ziel {
+  border: 2px solid var(--mm-rule-light);
+  border-radius: var(--mm-radius);
+  padding: 12px;
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  text-align: center;
+}
+
+.q-ziel.ueber { border-color: var(--mm-turquoise); background: var(--mm-turquoise-light); }
+
+.q-ziel .marke {
+  color: var(--mm-german-strong);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.q-ziel .marke .hanzi  { font-family: var(--mm-font-hanzi); }
+.q-ziel .marke .pinyin { font-style: italic; }
+
+/* --------------------------------------------------------------------------
+   Auswertung
+   -------------------------------------------------------------------------- */
+
+.q-frage.richtig { border-color: var(--mm-correct); background: var(--mm-correct-light); }
+.q-frage.falsch  { border-color: var(--mm-wrong);   background: var(--mm-wrong-light); }
+
+.q-frage.richtig .q-option,
+.q-frage.falsch  .q-option,
+.q-frage.richtig .q-reihe-zeile,
+.q-frage.falsch  .q-reihe-zeile,
+.q-frage.richtig .q-ziel,
+.q-frage.falsch  .q-ziel,
+.q-frage.richtig .q-chip,
+.q-frage.falsch  .q-chip { cursor: default; }
+
+/* Die richtige Lösung wird nach dem Auswerten grün umrandet — auch dann,
+   wenn sie nicht gewählt wurde. Sonst bliebe offen, was gestimmt hätte. */
+.q-option.loesung { border-color: var(--mm-correct); background: #FFF; }
+.q-option.daneben { border-color: var(--mm-wrong);   background: #FFF; }
+
+.q-urteil {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--mm-rule-light);
+  font-size: 16px;
+}
+
+.q-urteil .zeichen { font-size: 20px; font-weight: 700; flex: 0 0 auto; }
+.q-frage.richtig .q-urteil .zeichen { color: var(--mm-correct); }
+.q-frage.falsch  .q-urteil .zeichen { color: var(--mm-wrong); }
+
+.q-urteil .text strong { color: var(--mm-german-strong); }
+.q-urteil .text .hanzi  { font-family: var(--mm-font-hanzi); color: var(--mm-hanzi); }
+.q-urteil .text .pinyin { font-style: italic; color: var(--mm-pinyin); }
+
+/* --------------------------------------------------------------------------
+   Fußleiste mit Auswerten und Ergebnis
+   -------------------------------------------------------------------------- */
+
+.q-leiste {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 5;
+  background: var(--mm-bg);
+  border-top: 2px solid var(--mm-rule-light);
+  padding: 14px 24px;
+}
+
+.q-leiste-innen {
+  max-width: 920px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.q-knopf {
+  border: 2px solid var(--mm-turquoise);
+  border-radius: 999px;
+  background: var(--mm-turquoise);
+  color: #FFF;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  padding: 12px 26px;
+  cursor: pointer;
+}
+
+.q-knopf:hover { background: var(--mm-turquoise-dark); border-color: var(--mm-turquoise-dark); }
+
+.q-knopf--leer { background: var(--mm-bg); color: var(--mm-turquoise); }
+.q-knopf--leer:hover { background: var(--mm-turquoise-light); }
+
+.q-knopf:focus-visible,
+.q-option:focus-within,
+.q-zurueck:focus-visible {
+  outline: 3px solid var(--mm-turquoise-dark);
+  outline-offset: 3px;
+}
+
+.q-ergebnis { font-size: 16px; }
+.q-ergebnis .zahl { color: var(--mm-german-strong); font-size: 21px; font-weight: 700; }
+
+.q-balken {
+  flex: 1 1 160px;
+  height: 10px;
+  min-width: 120px;
+  border-radius: 5px;
+  background: var(--mm-rule-light);
+  overflow: hidden;
+}
+
+.q-balken span {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--mm-turquoise);
+  transition: width 400ms ease;
+}
+
+.q-offen { font-size: 15px; }
+
+@media (max-width: 620px) {
+  .q-kopf-innen { flex-wrap: wrap; }
+  .q-zurueck { margin-left: 0; }
+  .q-rf { flex-direction: column; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .q-balken span { transition-duration: 0s; }
+}

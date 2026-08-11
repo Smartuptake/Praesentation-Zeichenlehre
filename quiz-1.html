@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quiz 1 · Mandarin Maverick</title>
+
+<!--
+  Mandarin Maverick – Fast Track Chinese
+  Quiz 1 zur Präsentation „Einführung in die chinesische Zeichenlehre“
+
+  Stufe 1 · leicht. Gefragt wird ausschließlich, was auf den Folien selbst
+  steht — ohne die Lesekästen. Aufbau und Auswertung übernimmt quiz.js.
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap">
+<link rel="stylesheet" href="quiz.css">
+</head>
+
+<body>
+
+<header class="q-kopf">
+  <div class="q-kopf-innen">
+    <img src="assets/logo/mm-logo-symbol-color.png" alt="Mandarin Maverick">
+    <div>
+      <h1 id="q-titel"></h1>
+      <p id="q-untertitel"></p>
+      <span class="q-stufe" id="q-stufe"></span>
+    </div>
+    <a class="q-zurueck" href="index.html">← zur Präsentation</a>
+  </div>
+</header>
+
+<main id="q-fragen"></main>
+
+<div class="q-leiste">
+  <div class="q-leiste-innen">
+    <button type="button" class="q-knopf" id="q-auswerten">Auswerten</button>
+    <button type="button" class="q-knopf q-knopf--leer" id="q-neu" hidden>Noch einmal</button>
+    <span class="q-offen" id="q-offen"></span>
+    <span class="q-ergebnis" id="q-ergebnis"></span>
+    <div class="q-balken" id="q-balken"><span></span></div>
+  </div>
+</div>
+
+<script>
+const QUIZ = {
+  titel: 'Quiz 1 · Die Folien',
+  untertitel: 'Alles, was hier gefragt wird, stand auf einer Folie.',
+  stufe: 1,
+  fragen: [
+
+    {
+      typ: 'mc',
+      frage: 'Welche Schriftform ist der <strong>älteste gesicherte Beleg</strong> der chinesischen Schrift?',
+      optionen: [
+        'Die Jiǎhú-Zeichen aus <span class="pinyin">Hénán</span>',
+        'Die Orakelknochenschrift <span class="hanzi">甲骨文</span>',
+        'Die Bronzeschrift <span class="hanzi">金文</span>',
+        'Die kleine Siegelschrift <span class="hanzi">小篆</span>'
+      ],
+      richtig: [1],
+      erklaerung: 'Die Orakelknochenschrift der Shang-Zeit ist die älteste gesicherte Form. Die Jiǎhú-Zeichen sind zwar älter, aber durch nichts mit ihr verbunden.'
+    },
+
+    {
+      typ: 'rf',
+      frage: 'Die vier Schriftstile der Han-Zeit lösten einander ab: Jeder neue Stil verdrängte den vorherigen.',
+      richtig: false,
+      erklaerung: 'Sie lösen einander gerade <strong>nicht</strong> ab, sondern treten nebeneinander und übernehmen verschiedene Aufgaben — Verwaltung, Druck, Handschrift und Kunst.'
+    },
+
+    {
+      typ: 'luecke',
+      frage: 'Die vier Schätze des Studierzimmers <span class="hanzi">文房四宝</span> — eines fehlt.',
+      satz: 'Pinsel <span class="hanzi">笔</span>, Tusche <span class="hanzi">墨</span>, Papier <span class="hanzi">纸</span> und der ___ <span class="hanzi">砚</span>.',
+      loesung: ['Reibstein', 'Reibestein', 'Tuschestein', 'yàn'],
+      erklaerung: 'Der Reibstein <span class="hanzi">砚</span> <span class="pinyin">yàn</span> — auf ihm wird der feste Tuscheriegel mit Wasser angerieben.'
+    },
+
+    {
+      typ: 'reihenfolge',
+      frage: 'Bringe die chinesischen Schriftstile in ihre zeitliche Reihenfolge — das Früheste nach oben.',
+      elemente: [
+        'Orakelknochenschrift <span class="hanzi">甲骨文</span>',
+        'Bronzeschrift <span class="hanzi">金文</span>',
+        'Kleine Siegelschrift <span class="hanzi">小篆</span>',
+        'Kanzleischrift <span class="hanzi">隶书</span>',
+        'Regelschrift <span class="hanzi">楷书</span>'
+      ],
+      erklaerung: 'Von der geritzten Knochenschrift über den Bronzeguss und die Standardisierung von 221 v. Chr. bis zur Schrift, die heute in Büchern steht.'
+    },
+
+    {
+      typ: 'zuordnung',
+      frage: 'Ordne die vier Schriftproben ihren Namen zu.',
+      ziele: [
+        'Kanzleischrift <span class="hanzi">隶书</span>',
+        'Regelschrift <span class="hanzi">楷书</span>',
+        'Halbkursivschrift <span class="hanzi">行书</span>',
+        'Grasschrift <span class="hanzi">草书</span>'
+      ],
+      karten: [
+        { bild: 'bilder/Kanzleischrift.jpg', alt: 'Schriftprobe A',
+          text: 'Probe A', ziel: 'Kanzleischrift 隶书' },
+        { bild: 'bilder/Regelschrift.jpg', alt: 'Schriftprobe B',
+          text: 'Probe B', ziel: 'Regelschrift 楷书' },
+        { bild: 'bilder/Kursivschrift.jpg', alt: 'Schriftprobe C',
+          text: 'Probe C', ziel: 'Halbkursivschrift 行书' },
+        { bild: 'bilder/Grasschrift.jpg', alt: 'Schriftprobe D',
+          text: 'Probe D', ziel: 'Grasschrift 草书' }
+      ],
+      erklaerung: 'Je flüchtiger die Hand, desto weiter löst sich der Strich vom Einzelzeichen — von der klar gegliederten Kanzleischrift bis zur Grasschrift, die ein Zeichen in einem Zug schreibt.'
+    },
+
+    {
+      typ: 'mc',
+      frage: 'Was bedeutet <span class="hanzi">象形</span> <span class="pinyin">xiàngxíng</span>?',
+      optionen: [
+        '„die Form abbilden“ — das Zeichen zeichnet die Sache nach',
+        '„auf eine Sache zeigen“ — ein Strich markiert die Stelle',
+        '„vereinigte Bedeutungen“ — zwei Zeichen ergeben einen neuen Sinn',
+        '„Form und Laut“ — Bedeutungsteil plus Lautteil'
+      ],
+      richtig: [0],
+      erklaerung: '<span class="hanzi">象形</span> sind die Piktogramme. Die anderen drei Erklärungen gehören zu <span class="hanzi">指事</span>, <span class="hanzi">会意</span> und <span class="hanzi">形声</span>.'
+    },
+
+    {
+      typ: 'mc',
+      frage: 'Welche Aussagen über das Radikal <span class="hanzi">部首</span> <span class="pinyin">bùshǒu</span> sind richtig?',
+      optionen: [
+        'Jedes chinesische Zeichen hat genau ein Radikal.',
+        'Das Radikal steht immer links im Zeichen.',
+        'Die Zuordnung ist manchmal rein traditionell und wirkt willkürlich.',
+        'Nach den Radikalen sind die Zeichen im Wörterbuch geordnet.'
+      ],
+      richtig: [0, 2, 3],
+      erklaerung: 'Das Radikal kann links, rechts, oben, unten oder außen stehen — <span class="hanzi">江</span> links, <span class="hanzi">放</span> rechts, <span class="hanzi">花</span> oben, <span class="hanzi">想</span> unten, <span class="hanzi">园</span> außen.'
+    },
+
+    {
+      typ: 'mc',
+      frage: 'Wie viele klassische Radikale umfasst die Tafel, die das <span class="hanzi">康熙字典</span> von 1716 verbindlich machte?',
+      optionen: ['180', '214', '540', '3500'],
+      richtig: [1],
+      erklaerung: '214, geordnet nach der Strichzahl — von einem Strich bis siebzehn. Die 540 stammen aus dem älteren <span class="hanzi">说文解字</span> von 100 n. Chr.'
+    },
+
+    {
+      typ: 'luecke',
+      frage: 'Die Erfindung des Alphabets in Ugarit.',
+      satz: 'Nicht die Form der Zeichen war das Neue, sondern ihre feste ___.',
+      loesung: ['Reihenfolge', 'Ordnung', 'Abfolge'],
+      erklaerung: 'Die Reihenfolge ʾa – b – g – d … lebt über das Phönizische und Griechische bis in unser ABC fort.'
+    },
+
+    {
+      typ: 'reihenfolge',
+      frage: 'In welcher Reihenfolge schlägt man ein unbekanntes Zeichen im Wörterbuch nach?',
+      elemente: [
+        'Das Radikal am Zeichen bestimmen',
+        'Das Radikal im Radikalverzeichnis <span class="hanzi">部首目录</span> suchen',
+        'Die übrigen Striche zählen und die Untergruppe finden',
+        'Das Zeichen in der Gruppe finden und im Hauptteil nachschlagen'
+      ],
+      erklaerung: 'Aus mehreren zehntausend Zeichen werden so in vier Schritten eine Handvoll Kandidaten.'
+    },
+
+    {
+      typ: 'rf',
+      frage: 'Die Keilschrift heißt so, weil sie mit einem <strong>angeschnittenen Schilfrohr in feuchten Ton gedrückt</strong> wurde.',
+      richtig: true,
+      erklaerung: 'Der kantige Griffel hinterlässt keinen Strich, sondern einen Keil. Das Material bestimmt die Form der Schrift.'
+    },
+
+    {
+      typ: 'mc',
+      frage: 'Wie viele Zeichen braucht man im Alltag? Was stand dazu auf der Folie?',
+      optionen: [
+        'Schulkinder lernen in den ersten sechs Schuljahren etwa 3000 Zeichen.',
+        'Wer mehr als 1500 Zeichen beherrscht, gilt nicht als Analphabet.',
+        'Mit den 3500 häufigsten Zeichen liest man 99,7 % eines Textes.',
+        'Für eine Zeitung braucht man mindestens 20 000 Zeichen.'
+      ],
+      richtig: [0, 1, 2],
+      erklaerung: 'Der Zeichenbestand wächst, der Gebrauch nicht: Rund 85 % aller je verzeichneten Zeichen sind heute außer Gebrauch.'
+    }
+
+  ]
+};
+</script>
+<script src="quiz.js"></script>
+
+</body>
+</html>

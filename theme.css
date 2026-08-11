@@ -1,0 +1,2210 @@
+/* ==========================================================================
+   Mandarin Maverick – Fast Track Chinese
+   theme.css · Präsentationssystem 16:9
+   Basis: MM_Designhandbuch v1.4, Kap. 3 (Farbe), 4 (Typografie), 6 (Folienraster),
+          8 (Tabellen), 9 (Kästen), 15.1 (Tokens)
+   Bewusst nicht umgesetzt: Kap. 11 (Figurenensemble), Kap. 13 (Funktions-Icons).
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1  Tokens — Kap. 15.1 unverändert übernommen, ergänzt um das Folienraster 6.1
+   -------------------------------------------------------------------------- */
+
+:root {
+  /* Marke */
+  --mm-turquoise:        #039A9A;
+  --mm-turquoise-dark:   #02736F;
+  --mm-turquoise-light:  #E6F5F5;
+  --mm-bordeaux:         #961B1D;  /* verbindlich, aus der Logo-SVG */
+
+  /* Sprachsemantik – nicht überschreiben (Kap. 3.3) */
+  --mm-pinyin:           #2271FF;
+  --mm-pinyin-small:     #1A5CD8;  /* < 12 pt */
+  --mm-hanzi:            #C61919;
+  --mm-german:           #5C5C5C;
+  --mm-german-strong:    #111111;
+
+  /* Neutral */
+  --mm-bg:               #FFFFFF;
+  --mm-rule:             #707070;
+  --mm-rule-light:       #E3E6E8;
+
+  /* Signal – nur Bewertung und Warnung, nie für Sprache */
+  --mm-correct:          #0E8A44;
+  --mm-warning:          #D2691E;
+
+  /* Schriftketten (Kap. 4.2) */
+  --mm-font-latin:   "Helvetica Neue", Helvetica, Arial, "Noto Sans", sans-serif;
+  --mm-font-display: "Helvetica Neue Condensed", "Arial Narrow",
+                     "Roboto Condensed", "Helvetica Neue", sans-serif;
+  --mm-font-hanzi:   "Kaiti SC", "STKaiti", "KaiTi", "Noto Serif SC",
+                     "Songti SC", serif;
+
+  /* Zeilenabstände (Kap. 4.5) */
+  --mm-lh-de:     1.35;
+  --mm-lh-pinyin: 1.5;
+  --mm-lh-hanzi:  1.7;
+
+  /* Folienraster 1920 × 1080 (Kap. 6.1) */
+  --mm-slide-w:        1920px;
+  --mm-slide-h:        1080px;
+  --mm-safe:           80px;
+  --mm-gutter:         24px;
+  --mm-title-top:      80px;
+  --mm-title-h:        140px;
+  --mm-content-top:    260px;
+  --mm-content-bottom: 980px;
+  --mm-footer-top:     1000px;
+  --mm-footer-h:       40px;
+
+  /* Bildmarke oben links (Kap. 6.1 / 2.6) */
+  --mm-logo-corner-h:     54px;
+  --mm-logo-corner-inset: 24px;
+  --mm-logo-corner-alpha: 1;   /* 0.85–1.0; darunter leidet der Markenauftritt */
+
+  /* Cursor als bordeauxroter Punkt (Bildschirmwerkzeug, Abschnitt 12) */
+  --mm-cursor-size:      18px;
+  --mm-cursor-color:     var(--mm-bordeaux);
+
+  /* Foliengrößen in px (Kap. 4.4) */
+  --mm-fs-title:      54px;
+  --mm-fs-subtitle:   32px;
+  --mm-fs-body:       30px;
+  --mm-fs-pinyin:     38px;
+  --mm-fs-hanzi:      60px;
+  --mm-fs-hanzi-key: 160px;   /* Schlüsselzeichen, 80–120 pt */
+  --mm-fs-table:      24px;
+  --mm-fs-footer:     16px;
+
+  /* Bewegung – ausschließlich Verblassen (Kap. 6.3) */
+  --mm-fade: 250ms;
+
+  --mm-radius: 8px;
+}
+
+/* --------------------------------------------------------------------------
+   2  Grundlagen
+   -------------------------------------------------------------------------- */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--mm-bg);
+  font-family: var(--mm-font-latin);
+  color: var(--mm-german);
+}
+
+/* --------------------------------------------------------------------------
+   3  Sprachsemantik (Kap. 3.3) — gilt ausnahmslos, auch in Tabellen und Kästen
+   -------------------------------------------------------------------------- */
+
+.pinyin {
+  color: var(--mm-pinyin);
+  font-family: var(--mm-font-latin);
+  line-height: var(--mm-lh-pinyin);
+}
+
+/* Unter 12 pt bzw. 16 px reicht der Kontrast von #2271FF nicht (Kap. 3.5). */
+.pinyin-small { color: var(--mm-pinyin-small); }
+
+.hanzi {
+  color: var(--mm-hanzi);
+  font-family: var(--mm-font-hanzi);
+  line-height: var(--mm-lh-hanzi);
+}
+
+.de     { color: var(--mm-german); line-height: var(--mm-lh-de); }
+.strong { color: var(--mm-german-strong); font-weight: 700; }
+
+/* Nur für Bewertung und Warnung, nie für Sprachinhalte. */
+.correct { color: var(--mm-correct); }
+.warning { color: var(--mm-warning); }
+
+/* --------------------------------------------------------------------------
+   4  Bühne — die Folie bleibt exakt 1920 × 1080 und wird als Ganzes skaliert,
+      damit alle Maße aus Kap. 6.1 unverändert in px gelten.
+      --mm-scale setzt deck.js.
+   -------------------------------------------------------------------------- */
+
+.mm-deck {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--mm-bg);
+}
+
+/* Die Bühne sitzt mittig über der Bedienleiste, nicht mittig im Fenster:
+   deck.js misst die Höhe der Leiste und setzt --mm-buehne-mitte auf die Mitte
+   des verbleibenden Raums. Dadurch liegt keine Folie mehr unter der Leiste —
+   weder Fußzeile noch Bild. Der Preis ist eine um wenige Prozent kleinere
+   Folie; er ist geringer als der Schaden verdeckter Inhalte. */
+.mm-stage {
+  position: absolute;
+  left: 50%;
+  top: var(--mm-buehne-mitte, 50%);
+  width: var(--mm-slide-w);
+  height: var(--mm-slide-h);
+  transform: translate(-50%, -50%) scale(var(--mm-scale, 1));
+}
+
+.mm-slide {
+  position: absolute;
+  inset: 0;
+  padding: var(--mm-safe);
+  background: var(--mm-bg);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--mm-fade) ease, visibility 0s linear var(--mm-fade);
+}
+
+/* Absatzabstände entstehen im System über Weißraum-Regeln, nicht über
+   Browser-Vorgaben – die skalieren sonst mit der Schriftgröße mit. */
+.mm-slide :is(h1, h2, h3, p, ul, ol, figure, table) { margin: 0; }
+
+.mm-slide.is-active {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity var(--mm-fade) ease, visibility 0s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mm-slide { transition-duration: 0s; }
+}
+
+/* --------------------------------------------------------------------------
+   5  Folienzonen (Kap. 6.1)
+   -------------------------------------------------------------------------- */
+
+.mm-slide-title {
+  position: absolute;
+  left: var(--mm-safe);
+  right: var(--mm-safe);
+  top: var(--mm-title-top);
+  min-height: var(--mm-title-h);
+  margin: 0;
+  color: var(--mm-turquoise);
+  font-size: var(--mm-fs-title);
+  font-weight: 700;
+  line-height: var(--mm-lh-de);
+}
+
+.mm-slide-title .sub {
+  display: block;
+  margin-top: 12px;
+  font-size: var(--mm-fs-subtitle);
+  font-weight: 400;
+}
+
+.mm-content {
+  position: absolute;
+  left: var(--mm-safe);
+  right: var(--mm-safe);
+  top: var(--mm-content-top);
+  height: calc(var(--mm-content-bottom) - var(--mm-content-top));
+  font-size: var(--mm-fs-body);
+  line-height: var(--mm-lh-de);
+}
+
+/* Foliengrößen der Sprachebenen (Kap. 4.4). .hanzi-key ist das
+   Schlüsselzeichen, das eine Folie allein trägt. */
+.mm-content .pinyin    { font-size: var(--mm-fs-pinyin); }
+.mm-content .hanzi     { font-size: var(--mm-fs-hanzi); }
+.mm-content .hanzi-key { font-size: var(--mm-fs-hanzi-key); }
+
+/* Zwölfspaltiges Raster, Steg 24 px — für mehrspaltige Folien. */
+.mm-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--mm-gutter);
+}
+
+.mm-footer {
+  position: absolute;
+  left: var(--mm-safe);
+  right: var(--mm-safe);
+  top: var(--mm-footer-top);
+  height: var(--mm-footer-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--mm-turquoise);
+  font-size: var(--mm-fs-footer);
+}
+
+/* Bildmarke oben links: Sie steht über dem Folientitel (Titelzone ab 80 px)
+   und bleibt damit auf jeder Folie an derselben Stelle. */
+.mm-logo-corner {
+  position: absolute;
+  left: var(--mm-logo-corner-inset);
+  top: var(--mm-logo-corner-inset);
+  height: var(--mm-logo-corner-h);
+  width: auto;
+  opacity: var(--mm-logo-corner-alpha);
+}
+
+/* --------------------------------------------------------------------------
+   6  Folientypen (Kap. 6.2)
+   -------------------------------------------------------------------------- */
+
+/* Abschnittstrenner — trägt nur einen Titel, sonst nichts. Fuß und
+   Bildmarke liegen absolut und stören die Zentrierung nicht. */
+.mm-slide--abschnitt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mm-abschnitt-titel {
+  max-width: 1480px;
+  text-align: center;
+  color: var(--mm-turquoise);
+  font-size: 76px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+/* Titelfolie — Volllogo 480–640 px, zentriert. */
+.mm-slide--cover {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 48px;
+}
+
+.mm-cover-logo { width: 560px; height: auto; }
+
+.mm-cover-title {
+  margin: 0;
+  color: var(--mm-turquoise);
+  font-size: var(--mm-fs-title);
+  font-weight: 700;
+}
+
+.mm-cover-meta {
+  color: var(--mm-german);
+  font-size: var(--mm-fs-subtitle);
+  line-height: var(--mm-lh-de);
+}
+
+/* Abschlussfolie: 加油 / Jiā yóu! */
+.mm-slide--cover .hanzi  { font-size: var(--mm-fs-hanzi-key); }
+.mm-slide--cover .pinyin { font-size: var(--mm-fs-pinyin); }
+
+/* Kapiteltrenner — großes Hanzi links, Pinyin darüber, Deutsch darunter. */
+.mm-chapter {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+}
+
+.mm-chapter .pinyin { font-size: var(--mm-fs-pinyin); }
+.mm-chapter .hanzi  { font-size: var(--mm-fs-hanzi-key); }
+.mm-chapter .de     { font-size: var(--mm-fs-subtitle); }
+
+/* Schlüsselzeichen groß in der Folienmitte, das Pinyin in Normalgröße
+   unmittelbar darunter. Für Folien, die ein Zeichen allein tragen. */
+.mm-chapter--zentriert {
+  align-items: center;
+  text-align: center;
+  gap: 0;
+  height: 100%;
+}
+
+.mm-chapter--zentriert .hanzi-key {
+  margin: 0;
+  font-size: 400px;
+  line-height: 1;
+}
+
+.mm-chapter--zentriert .pinyin { margin: 12px 0 0; }
+.mm-chapter--zentriert .de     { margin: 32px 0 0; max-width: 1200px; }
+
+/* Latinische Alphabetprobe — Gegenstück zur Zeichenschrift (Folie 13). */
+.mm-alphabet {
+  border: 2px solid var(--mm-rule-light);
+  border-radius: var(--mm-radius);
+  padding: 24px 20px;
+  text-align: center;
+  color: var(--mm-german-strong);
+  font-family: var(--mm-font-latin);
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 0.12em;
+  word-spacing: 0.1em;
+}
+
+/* Lernziele — türkiser Pfeil als Aufzählungszeichen. */
+.mm-goals { margin: 0; padding: 0; list-style: none; }
+
+.mm-goals li {
+  position: relative;
+  padding-left: 48px;
+  margin-bottom: 28px;
+}
+
+.mm-goals li::before {
+  content: "➪";
+  position: absolute;
+  left: 0;
+  color: var(--mm-turquoise);
+}
+
+/* Aufzählung Ebene 1 (Kap. 9.3): türkises Zeichen, Text folgt der Sprachfarbe. */
+.mm-list { margin: 0; padding: 0; list-style: none; }
+
+.mm-list li {
+  position: relative;
+  padding-left: 32px;
+  margin-bottom: 20px;
+}
+
+.mm-list li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--mm-turquoise);
+}
+
+/* Lange Aufzählungen — kleinere Zeile, engerer Abstand. Bleibt mit 24 px
+   über der Untergrenze aus Kap. 4.4. */
+.mm-list--knapp li { margin-bottom: 12px; font-size: var(--mm-fs-table); }
+.mm-list--knapp li:last-child { margin-bottom: 0; }
+.mm-list--knapp .hanzi-inline { font-size: var(--mm-fs-table); }
+.mm-list--knapp .pinyin { font-size: inherit; line-height: inherit; }
+
+/* Kurze Aufzählung als eine Zeile — für Folien, auf denen die Abbildung die
+   ganze Breite bekommt und die Stichworte darunter Platz finden müssen. */
+.mm-list--reihe {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px 48px;
+}
+
+.mm-list--reihe li { margin-bottom: 0; }
+
+/* Arbeitsschritte 1., 2., 3. — türkis und fett (Kap. 9.3). */
+.mm-list--num { counter-reset: mm-step; }
+
+.mm-list--num li { padding-left: 56px; }
+
+.mm-list--num li::before {
+  counter-increment: mm-step;
+  content: counter(mm-step) ".";
+  color: var(--mm-turquoise);
+  font-weight: 700;
+}
+
+/* Einzelnes Hanzi mitten im deutschen Fließtext oder in einer Titelzeile:
+   Farbe und Schrift bleiben, der Zeilenfall wird nicht gesprengt. */
+.hanzi.hanzi-inline { font-size: var(--mm-fs-subtitle); line-height: 1; }
+.hanzi.hanzi-body   { font-size: var(--mm-fs-body);     line-height: 1; }
+
+/* Pinyin, das mitten in einem deutschen Aufzählungstext steht, folgt der
+   Größe der Zeile — die 28 pt aus Kap. 4.4 gelten für Pinyin als eigene
+   Zeile, nicht für eingestreute Wörter. Die Farbe bleibt unverändert. */
+.mm-content .mm-list .pinyin { font-size: inherit; }
+
+/* Deutscher Text eine Stufe größer, für tragende Aussagen. */
+.mm-sub { font-size: var(--mm-fs-subtitle); }
+
+/* Zeichengleichung im Fließtext, z. B. 女 + 马 = 妈.
+   Zwei Klassen, damit die Regel den Margin-Reset aus Abschnitt 4 schlägt. */
+.mm-content .mm-formula-line { margin-bottom: 32px; }
+
+/* Große Kennzahl. Bewusst nicht rot – Rot ist ausschließlich für Hanzi
+   reserviert (Kap. 3.3). */
+.mm-figure-number {
+  font-size: 120px;
+  font-weight: 700;
+  color: var(--mm-german-strong);
+  line-height: 1.1;
+}
+
+/* Grammatikfolie — Formel groß zentriert, Farben nach Kap. 3.4. */
+.mm-formula {
+  text-align: center;
+  font-size: var(--mm-fs-hanzi);
+  font-weight: 700;
+  line-height: var(--mm-lh-hanzi);
+  margin: 0 0 56px;
+}
+
+.mm-formula .op { color: var(--mm-german-strong); }  /* S, Verb, Objekt, Ort, + */
+
+/* Aufgabenfolie — türkiser Balken oben (Kap. 6.2). */
+.mm-task-bar {
+  background: var(--mm-turquoise);
+  color: var(--mm-bg);
+  font-size: var(--mm-fs-subtitle);
+  font-weight: 700;
+  padding: 16px 32px;
+  margin-bottom: 48px;
+}
+
+/* Bildimpuls — Foto vollflächig, ein Satz in weißem Kasten. */
+.mm-slide--image { padding: 0; }
+
+.mm-slide--image figure { margin: 0; height: 100%; }
+
+.mm-slide--image figure img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.mm-image-caption {
+  position: absolute;
+  left: var(--mm-safe);
+  right: var(--mm-safe);
+  bottom: 140px;
+  background: var(--mm-bg);
+  padding: 32px 40px;
+  font-size: var(--mm-fs-subtitle);
+  line-height: var(--mm-lh-de);
+}
+
+/* Bildnachweis für historische Bilddokumente (Kap. 10.2). */
+.mm-credit {
+  font-size: var(--mm-fs-footer);
+  color: var(--mm-german);
+  text-align: right;
+}
+
+/* Text links, Bilddokument rechts. Der Standardfall für Erklärfolien mit
+   einem historischen Beleg. */
+.mm-split {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: 56px;
+  height: 100%;
+  align-items: center;
+}
+
+.mm-split--wide  { grid-template-columns: 4fr 8fr; }
+.mm-split--right { grid-template-columns: 7fr 5fr; }
+
+/* Die Figur füllt die Inhaltszone und schrumpft das Bild, sobald eine
+   Bildunterschrift dazukommt — sonst schöbe die Unterschrift das Bild
+   über die Zone hinaus. */
+.mm-figure {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  min-height: 0;
+}
+
+.mm-figure img {
+  display: block;
+  flex: 0 1 auto;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.mm-figure figcaption { flex: 0 0 auto; }
+
+/* Film in der Figur — verhält sich wie ein Bild. */
+.mm-figure video {
+  display: block;
+  flex: 0 1 auto;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  border: 1px solid var(--mm-rule-light);
+  border-radius: var(--mm-radius);
+  background: var(--mm-bg);
+}
+
+/* Zentriertes Einzelbild über die volle Inhaltsbreite. Die Unterschrift
+   folgt dem Bild in die Mitte — sonst stünde sie bei hochformatigen Bildern
+   weit links neben dem Motiv. */
+.mm-figure--center img { margin: 0 auto; width: auto; max-width: 100%; }
+.mm-figure--center figcaption { text-align: center; }
+
+/* Bildunterschriften bleiben bei 18 pt — die Untergrenze aus Kap. 4.4 gilt
+   auch hier, sonst sind sie im Raum nicht mehr lesbar. */
+.mm-figure figcaption {
+  margin-top: 16px;
+  font-size: var(--mm-fs-table);
+  line-height: var(--mm-lh-de);
+  color: var(--mm-german);
+}
+
+/* In der Bildunterschrift behalten Hanzi und Pinyin ihre Farbe, folgen aber
+   der Zeilengröße — sonst sprengen sie die Unterschrift (wie im Lesekasten). */
+.mm-figure figcaption .hanzi,
+.mm-figure figcaption .pinyin { font-size: inherit; line-height: inherit; }
+
+/* Waagerechte Zeichenentwicklungs-Streifen: Zeichen links, Bild rechts.
+   Die Gruppe steht mittig in der Inhaltszone – die Streifen sind rund 3:1
+   und füllen die Folienbreite nicht aus, der Rest ist Weißraum. */
+.mm-strips {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+}
+
+.mm-strip {
+  display: grid;
+  grid-template-columns: 180px auto;
+  justify-content: center;
+  align-items: center;
+  gap: 48px;
+}
+
+.mm-strip + .mm-strip { margin-top: 32px; }
+
+/* Über die Höhe begrenzen, sonst sprengen drei Streifen die Inhaltszone. */
+.mm-strip img { display: block; height: 200px; width: auto; }
+
+.mm-strip .label .hanzi  { font-size: var(--mm-fs-hanzi); display: block; }
+.mm-strip .label .pinyin { font-size: var(--mm-fs-subtitle); display: block; }
+.mm-strip .label .de     { font-size: var(--mm-fs-body); display: block; }
+
+/* Inhalt mittig in der Zone, wenn es kein Bild gibt. */
+.mm-content-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+}
+
+/* Zwei gleich breite Spalten. */
+.mm-split-even {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  height: 100%;
+  align-items: start;
+}
+
+/* Bildreihen. Die Zahl im Modifikator ist die Spaltenzahl. */
+.mm-gallery {
+  display: grid;
+  gap: var(--mm-gutter);
+  height: 100%;
+  align-content: center;
+}
+
+.mm-gallery--2 { grid-template-columns: repeat(2, 1fr); }
+.mm-gallery--3 { grid-template-columns: repeat(3, 1fr); }
+.mm-gallery--4 { grid-template-columns: repeat(4, 1fr); }
+.mm-gallery--5 { grid-template-columns: repeat(5, 1fr); }
+.mm-gallery--6 { grid-template-columns: repeat(3, 1fr); row-gap: 32px; }
+
+/* Sechs Proben in einer Reihe — die Stilübersicht. */
+.mm-gallery--reihe6 { grid-template-columns: repeat(6, 1fr); }
+.mm-gallery.mm-gallery--reihe6 .mm-figure img { max-height: 170px; }
+.mm-gallery.mm-gallery--reihe6 figcaption { margin-top: 10px; font-size: 18px; }
+
+/* Bildreihe über einem Textblock: Sie darf die Zone nicht ganz füllen. */
+.mm-gallery--oben { height: auto; align-content: start; margin-bottom: 28px; }
+
+/* Enger gesetzt — jeder Millimeter, den Steg und Unterschrift abgeben,
+   kommt den Abbildungen zugute. */
+.mm-gallery--eng { gap: 16px; }
+.mm-gallery--eng figcaption { margin-top: 8px; font-size: 18px; }
+
+.mm-gallery .mm-figure img { max-height: 380px; margin: 0 auto; }
+.mm-gallery--2 .mm-figure img { max-height: 620px; }
+.mm-gallery--6 .mm-figure img { max-height: 240px; }
+
+.mm-gallery figcaption { text-align: center; }
+
+/* Zwei Bilder übereinander bzw. nebeneinander in einer Figur. */
+.mm-figure--stack img + img { margin-top: var(--mm-gutter); }
+.mm-figure--stack img { max-height: 340px; margin-left: auto; margin-right: auto; }
+
+.mm-figure--pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--mm-gutter);
+  align-items: center;
+}
+
+.mm-figure--pair img { max-height: 560px; }
+
+/* Ungleiches Paar: links das Übersichtsbild, rechts das schmale Detail. */
+.mm-gallery--2-1 { grid-template-columns: 2fr 1fr; align-items: center; }
+.mm-gallery--2-1 .mm-figure img { max-height: 600px; }
+
+/* --------------------------------------------------------------------------
+   7a  Bildmarken — heben eine Stelle im Bild hervor, ohne das Bild selbst
+       zu verändern. Der Rahmen .mm-markbox schrumpft exakt auf das Bild,
+       damit die Prozentwerte der Marke auf dem Motiv sitzen und beim
+       Skalieren der Bühne mitwandern.
+
+       <span class="mm-markbox">
+         <img src="…" alt="…">
+         <span class="mm-mark" style="left:2%; top:57%; width:26%; height:41%"></span>
+       </span>
+
+       Gedreht: --mm-mark-drehung: 23deg (für Bänder wie den Fruchtbaren
+       Halbmond). Die Werte lassen sich gefahrlos nachjustieren.
+   -------------------------------------------------------------------------- */
+
+.mm-markbox {
+  position: relative;
+  display: inline-block;
+  margin: 0 auto;
+  line-height: 0;   /* sonst entsteht unter dem Bild eine Zeilenlücke */
+}
+
+/* In der Figur ist die Markbox ein Flex-Element und würde auf volle Breite
+   aufgeblasen — dann säßen die Marken neben dem Motiv. */
+.mm-figure .mm-markbox {
+  align-self: center;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.mm-figure .mm-markbox img {
+  width: auto;
+  max-width: 100%;
+  max-height: 560px;
+}
+
+.mm-mark {
+  position: absolute;
+  border: 4px solid var(--mm-bordeaux);
+  border-radius: 50%;
+  transform: rotate(var(--mm-mark-drehung, 0deg));
+  pointer-events: none;
+}
+
+/* Rechteckige Marke, wenn eine Ellipse zu viel Umland einschließt. */
+.mm-mark--kasten { border-radius: var(--mm-radius); }
+
+/* --------------------------------------------------------------------------
+   7b  Lupe — eine Miniatur auf der Folie, die beim Überfahren groß wird.
+       Für Belege, die den Vortrag nicht tragen, aber auf Nachfrage
+       lesbar sein sollen.
+
+       <span class="mm-lupe">
+         <img class="mm-lupe-klein" src="…" alt="…">
+         <span class="mm-lupe-gross"><img src="…" alt=""></span>
+       </span>
+
+       .mm-lupe bleibt bewusst unpositioniert: Die große Fassung bezieht
+       sich damit auf die Inhaltszone und füllt sie ganz aus.
+   -------------------------------------------------------------------------- */
+
+.mm-lupe { display: inline-block; line-height: 0; }
+
+.mm-lupe-klein {
+  display: block;
+  width: auto;
+  border: 2px solid var(--mm-turquoise);
+  border-radius: var(--mm-radius);
+}
+
+.mm-lupe-gross {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--mm-bg);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--mm-fade) ease, visibility 0s linear var(--mm-fade);
+}
+
+.mm-lupe:hover .mm-lupe-gross,
+.mm-lupe:focus-within .mm-lupe-gross {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity var(--mm-fade) ease, visibility 0s;
+}
+
+.mm-lupe-gross img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  border: 2px solid var(--mm-turquoise);
+  border-radius: var(--mm-radius);
+}
+
+/* Zeile aus Erläuterung und Miniatur. */
+.mm-lupe-zeile {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 48px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mm-lupe-gross { transition-duration: 0s; }
+}
+
+/* Nebenbemerkung unter dem Inhalt — kleiner als der Fließtext, aber nie
+   unter 18 pt. */
+.mm-caption {
+  margin-top: 28px;
+  font-size: var(--mm-fs-table);
+  color: var(--mm-german);
+}
+
+/* Auch in der Nebenbemerkung folgen Hanzi und Pinyin der Zeilengröße. */
+.mm-caption .hanzi,
+.mm-caption .pinyin { font-size: inherit; line-height: inherit; }
+
+/* Mehrere Blöcke untereinander in der Inhaltszone, gemeinsam mittig.
+   Spaltenblöcke geben dabei ihre Vollhöhe ab — sonst schöbe der erste
+   Block alles Folgende aus der Zone. */
+.mm-content--stapel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 32px;
+}
+
+.mm-content--stapel > .mm-split,
+.mm-content--stapel > .mm-split-even,
+.mm-content--stapel > .mm-gallery { height: auto; }
+
+/* Hervorgehobener Merksatz neben dem Fließtext. */
+.mm-note {
+  border-left: 4px solid var(--mm-turquoise);
+  padding-left: 32px;
+}
+
+.mm-note .hanzi  { display: block; margin-top: 12px; }
+.mm-note .pinyin { display: block; }
+
+/* Zitat aus einer Quelle. */
+.mm-quote {
+  border-left: 4px solid var(--mm-turquoise);
+  padding-left: 32px;
+  font-size: var(--mm-fs-subtitle);
+}
+
+/* Zeichenkarten: Hanzi groß, darunter Pinyin und Deutsch. */
+.mm-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--mm-gutter);
+  height: 100%;
+  align-content: center;
+}
+
+.mm-card {
+  border: 1px solid var(--mm-rule-light);
+  border-radius: var(--mm-radius);
+  padding: 20px 16px;
+  text-align: center;
+}
+
+.mm-card .hanzi  { display: block; }
+.mm-card .pinyin { display: block; font-size: var(--mm-fs-subtitle); }
+.mm-card .de     { display: block; font-size: var(--mm-fs-table); }
+
+/* Zeichenzerlegung: 广 + 木 = 床 */
+.mm-decomp {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+}
+
+.mm-decomp-part { text-align: center; min-width: 150px; }
+
+.mm-decomp-part .hanzi  { display: block; line-height: 1.15; }
+.mm-decomp-part .pinyin { display: block; font-size: var(--mm-fs-table); }
+.mm-decomp-part .de     { display: block; font-size: var(--mm-fs-table); }
+
+/* Das Ergebnis trägt die Aussage – es bekommt Rahmen und mehr Größe. */
+.mm-decomp-part.is-result {
+  border: 2px solid var(--mm-turquoise);
+  border-radius: var(--mm-radius);
+  padding: 12px 24px;
+}
+
+.mm-decomp-part.is-result .hanzi { font-size: 72px; }
+
+.mm-decomp-op {
+  color: var(--mm-turquoise);
+  font-size: var(--mm-fs-subtitle);
+  font-weight: 700;
+}
+
+.mm-decomp-stack {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 24px;
+  height: 100%;
+}
+
+/* Strichfolge-Spalte: Zeichen groß, darunter die nummerierten Striche. */
+.mm-strokes { text-align: center; }
+
+/* Nur die Kopfzeilen der Spalte, nicht das Pinyin in den Listenpunkten —
+   sonst bricht jeder Strichname auf eine eigene Zeile um. */
+.mm-strokes > .hanzi-key { display: block; font-size: 120px; line-height: 1.05; }
+.mm-strokes > .pinyin    { display: block; margin-bottom: 24px; }
+.mm-strokes .mm-list     { text-align: left; }
+
+/* Gedrängte Liste für lange Aufzählungen — bleibt bei 18 pt.
+   Eingestreute Hanzi und Pinyin folgen hier der Zeilengröße, sonst reißt
+   ein einzelnes Wort die ganze Zeile auf. */
+.mm-list--tight li            { font-size: var(--mm-fs-table); }
+.mm-list--tight li + li       { margin-top: 6px; }
+.mm-list--tight .pinyin,
+.mm-list--tight .hanzi        { font-size: inherit; line-height: 1.25; }
+
+.mm-yong { text-align: center; }
+
+.mm-yong .hanzi-key { display: block; line-height: 1.05; }
+.mm-yong .pinyin    { display: block; font-size: var(--mm-fs-pinyin); }
+.mm-yong .de        { display: block; font-size: var(--mm-fs-body); }
+
+/* Übungsraster für das Zeichenschreibblatt (Kap. 9.5). */
+.mm-writegrid {
+  display: grid;
+  grid-template-columns: repeat(8, 160px);
+  gap: 14px;
+  justify-content: center;
+}
+
+.mm-writegrid .cell {
+  width: 160px;
+  height: 160px;
+  border: 1px solid var(--mm-rule-light);
+  /* Mittelkreuz als Hilfslinie, gestrichelt und zurückhaltend. */
+  background-image:
+    linear-gradient(to right,  var(--mm-rule-light) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--mm-rule-light) 1px, transparent 1px);
+  background-size: 100% 50%, 50% 100%;
+  background-position: center, center;
+  background-repeat: no-repeat;
+}
+
+/* --------------------------------------------------------------------------
+   7  Aufdeckkarten — Gesprächsanlass im Vortrag.
+      Die Antwort steht von Anfang an im Textfluss und wird nur ein-
+      geblendet: so springt das Layout nicht und der PDF-Export bleibt
+      vollständig (Kap. 6.3).
+   -------------------------------------------------------------------------- */
+
+.mm-reveal {
+  display: block;
+  width: 100%;
+  border: 2px solid var(--mm-turquoise);
+  border-radius: var(--mm-radius);
+  background: var(--mm-bg);
+  padding: 28px 24px;
+  text-align: center;
+  font-family: var(--mm-font-latin);
+  /* Buttons erben die Schriftgröße nicht – ohne diese Zeile landet der Text
+     bei 13 px und reißt die Mindestgröße von 18 pt (Kap. 4.4). */
+  font-size: var(--mm-fs-body);
+  line-height: var(--mm-lh-de);
+  cursor: pointer;
+}
+
+.mm-reveal:focus-visible {
+  outline: 3px solid var(--mm-turquoise-dark);
+  outline-offset: 4px;
+}
+
+.mm-reveal .q { display: block; }
+
+.mm-reveal .a {
+  display: block;
+  margin-top: 20px;
+  opacity: 0;
+  transition: opacity var(--mm-fade) ease;
+}
+
+.mm-reveal.is-open .a { opacity: 1; }
+
+/* Der Hinweis verschwindet, sobald die Karte offen ist. */
+.mm-reveal .hint {
+  display: block;
+  margin-top: 20px;
+  font-size: var(--mm-fs-table);
+  color: var(--mm-turquoise);
+  transition: opacity var(--mm-fade) ease;
+}
+
+.mm-reveal.is-open .hint { opacity: 0; }
+
+/* Alle Karten einer Reihe gleich hoch, die Reihe mittig in der Inhaltszone. */
+.mm-reveal-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  gap: var(--mm-gutter);
+  align-items: stretch;
+  align-content: center;
+  height: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mm-reveal .a, .mm-reveal .hint { transition-duration: 0s; }
+}
+
+/* --------------------------------------------------------------------------
+   8  Lesekasten „zusätzliche Info“ — die Rednernotizen am Bildschirm.
+
+      Zwei Ebenen, wie in den Notizendokumenten angelegt:
+        Ebene 1  Kurztext, erscheint beim Überfahren mit dem Cursor
+        Ebene 2  Vertiefung und Schlüsselbegriffe, erscheint nach Klick auf
+                 „Klicke hier für vertiefende Informationen“ (unten links)
+
+      Der Kasten ist Vortragswerkzeug, kein Folieninhalt: Er liegt über der
+      Folie, nicht darin, und zählt deshalb nicht gegen die Sechs-Zeilen-Regel.
+   -------------------------------------------------------------------------- */
+
+/* Der Auslöser sitzt oben rechts in der Titelzone — dort ist auf jeder
+   Folie Platz, und die Inhaltszone bleibt unangetastet. */
+.mm-lk {
+  position: absolute;
+  right: var(--mm-safe);
+  top: var(--mm-title-top);
+  z-index: 5;
+}
+
+/* Auslöser: zurückhaltend, damit er die Folie nicht stört. */
+.mm-lk-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border: 2px solid var(--mm-turquoise);
+  border-radius: var(--mm-radius);
+  background: var(--mm-bg);
+  color: var(--mm-turquoise);
+  font-family: var(--mm-font-latin);
+  font-size: var(--mm-fs-table);
+  line-height: 1;
+  padding: 10px 18px;
+  cursor: pointer;
+}
+
+.mm-lk-btn::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--mm-turquoise);
+}
+
+.mm-lk-btn:focus-visible {
+  outline: 3px solid var(--mm-turquoise-dark);
+  outline-offset: 4px;
+}
+
+/* Die Tafel selbst. Rahmen und Weißraum statt Schatten (Kap. 9.1). */
+.mm-lk-pop {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 16px);
+  /* Volle Satzbreite: 1920 − 2 × 80 px Schutzrand. Je breiter der Satz,
+     desto weniger Zeilen — die Vertiefung passt dann meist ohne Rollen. */
+  width: 1760px;
+  /* Bis knapp an den unteren Folienrand: Oberkante liegt bei ~140 px. */
+  max-height: 880px;
+  overflow-y: auto;
+  border: 2px solid var(--mm-turquoise);
+  border-radius: var(--mm-radius);
+  background: var(--mm-bg);
+  padding: 36px 40px;
+  text-align: left;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--mm-fade) ease, visibility 0s linear var(--mm-fade);
+}
+
+.mm-lk:hover .mm-lk-pop,
+.mm-lk.is-hover .mm-lk-pop,
+.mm-lk.is-open .mm-lk-pop {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity var(--mm-fade) ease, visibility 0s;
+}
+
+.mm-lk-pop h3 {
+  margin: 0 0 20px;
+  color: var(--mm-turquoise);
+  font-size: var(--mm-fs-subtitle);
+  font-weight: 700;
+  line-height: var(--mm-lh-de);
+}
+
+.mm-lk-pop .lk-kurz {
+  margin: 0;
+  color: var(--mm-german);
+  font-size: 26px;
+  line-height: var(--mm-lh-de);
+}
+
+/* Im Fließtext des Kastens behalten Hanzi und Pinyin ihre Farbe, folgen
+   aber der Zeilengröße — sonst zerreißt der Absatz. Pinyin kursiv, wie in
+   den Notizendokumenten festgelegt. */
+.mm-lk-pop .hanzi  { font-size: inherit; line-height: inherit; }
+.mm-lk-pop .pinyin { font-size: inherit; line-height: inherit; font-style: italic; }
+
+/* Ebene 2 bleibt zu, bis geklickt wird — und geht auf denselben Weg wieder
+   zu: „is-tief“ ist ein eigener Schalter, unabhängig davon, ob der Kasten
+   selbst festgeklickt ist. */
+.mm-lk-pop .lk-tief,
+.mm-lk-pop .lk-begriffe { display: none; }
+
+.mm-lk.is-tief .mm-lk-pop .lk-tief,
+.mm-lk.is-tief .mm-lk-pop .lk-begriffe { display: block; }
+
+/* Zweispaltig — bei voller Satzbreite halbiert das die Höhe, sodass die
+   Vertiefung fast immer ohne Rollen auf die Folie passt. */
+.mm-lk-pop .lk-tief {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--mm-rule-light);
+  column-count: 2;
+  column-gap: 56px;
+}
+
+.mm-lk-pop .lk-tief p { break-inside: avoid; }
+
+.mm-lk-pop .lk-tief p {
+  margin: 0 0 16px;
+  color: var(--mm-german);
+  font-size: var(--mm-fs-table);
+  line-height: var(--mm-lh-de);
+}
+
+.mm-lk-pop .lk-tief p:last-child { margin-bottom: 0; }
+
+/* Jeder Absatz beginnt mit einem Stichwort — das trägt die Gliederung. */
+.mm-lk-pop .lk-tief strong { color: var(--mm-german-strong); }
+
+.mm-lk-pop .lk-begriffe {
+  margin: 24px 0 0;
+  padding: 20px 24px;
+  list-style: none;
+  border: 1px solid var(--mm-rule-light);
+  border-radius: var(--mm-radius);
+  column-count: 3;
+  column-gap: 40px;
+}
+
+.mm-lk-pop .lk-begriffe li {
+  color: var(--mm-german);
+  font-size: var(--mm-fs-table);
+  line-height: var(--mm-lh-de);
+  break-inside: avoid;
+}
+
+.mm-lk-pop .lk-begriffe li + li { margin-top: 8px; }
+
+/* Schaltfläche auf die zweite Ebene: unten links im Kasten. Sie bleibt
+   stehen, wenn die Vertiefung offen ist — sonst gäbe es keinen Weg zurück.
+   Die Beschriftung wechselt (deck.js). */
+.mm-lk-pop .lk-mehr {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 24px;
+  border: 1px solid var(--mm-turquoise);
+  border-radius: var(--mm-radius);
+  background: var(--mm-bg);
+  color: var(--mm-turquoise);
+  font-family: var(--mm-font-latin);
+  font-size: 18px;
+  line-height: 1;
+  padding: 10px 16px;
+  cursor: pointer;
+}
+
+.mm-lk-pop .lk-mehr::before {
+  content: "▸";
+  font-size: 16px;
+  line-height: 1;
+}
+
+.mm-lk-pop .lk-mehr:hover,
+.mm-lk-pop .lk-mehr:focus-visible {
+  background: var(--mm-turquoise-light);
+}
+
+.mm-lk-pop .lk-mehr:focus-visible {
+  outline: 3px solid var(--mm-turquoise-dark);
+  outline-offset: 3px;
+}
+
+/* Die Vertiefung sitzt hinter der Schaltfläche, wenn sie offen ist — also
+   rückt die Schaltfläche über den Text. */
+.mm-lk.is-tief .mm-lk-pop .lk-mehr { margin-top: 0; margin-bottom: 24px; }
+.mm-lk.is-tief .mm-lk-pop .lk-mehr::before { content: "▾"; }
+
+/* Bedienhinweis im Kopf des Kastens — er steht dort, wo der Blick beim
+   Öffnen ohnehin hinfällt, und erklärt beide Schalter in einer Zeile.
+   deck.js setzt ihn ein, damit er in allen Kästen gleich lautet. */
+.mm-lk-pop .lk-hinweis {
+  margin: -12px 0 20px;
+  color: var(--mm-german);
+  font-size: 18px;
+  line-height: var(--mm-lh-de);
+}
+
+.mm-lk-pop .lk-hinweis b {
+  color: var(--mm-turquoise);
+  font-weight: 700;
+}
+
+/* Der Kasten bleibt nach dem Verlassen kurz stehen (Nachlauf in deck.js),
+   damit der Weg von der Schaltfläche zur Vertiefungs-Schaltfläche über den
+   Zwischenraum hinweg gelingt. */
+
+/* Titel als zweiter Auslöser — „die betreffende Stelle" der Folie.
+   Die Aussparung rechts hält den Titel von der Schaltfläche frei. */
+.mm-slide-title.has-lk { cursor: help; padding-right: 230px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mm-lk-pop { transition-duration: 0s; }
+}
+
+/* --------------------------------------------------------------------------
+   9  Tabellen (Kap. 8.1) — weiße Zellen, dünne graue Linien, keine Zebrastreifen
+   -------------------------------------------------------------------------- */
+
+.mm-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 2px solid var(--mm-rule);
+  font-size: var(--mm-fs-table);
+}
+
+.mm-table th,
+.mm-table td {
+  border: 1px solid var(--mm-rule);
+  background: var(--mm-bg);
+  padding: 16px 24px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.mm-table th {
+  color: var(--mm-turquoise);
+  font-weight: 700;
+}
+
+.mm-table td.num,
+.mm-table th.num { text-align: right; }
+
+/* Eingestreute Hanzi und Pinyin folgen der Tabellengröße; nur ganze
+   Hanzi- bzw. Pinyin-Zellen werden groß gesetzt (Kap. 8.1). */
+.mm-table .hanzi    { font-size: var(--mm-fs-table); line-height: 1.25; }
+.mm-table .pinyin   { font-size: var(--mm-fs-table); line-height: 1.25; }
+.mm-table td.hanzi  { font-size: var(--mm-fs-hanzi);  line-height: 1.2; }
+.mm-table td.pinyin { font-size: var(--mm-fs-pinyin); line-height: 1.2; }
+
+/* Achtzeilige Übersichten: engere Zeilen, damit die Zone reicht. */
+.mm-table--compact th,
+.mm-table--compact td { padding: 10px 18px; }
+
+/* Radikaltabellen: schmale erste Spalte, Beispiele groß.
+   Zwölf Zeilen müssen in die 720 px der Inhaltszone passen — deshalb enge
+   Zeilenhöhe statt der voreingestellten 1.7 für Hanzi. */
+.mm-table--3col      { table-layout: fixed; }
+.mm-table--3col th:nth-child(1), .mm-table--3col td:nth-child(1) { width: 22%; }
+.mm-table--3col th:nth-child(2), .mm-table--3col td:nth-child(2) { width: 33%; }
+.mm-table--3col th,
+.mm-table--3col td   { padding: 6px 18px; }
+.mm-table--3col .hanzi { font-size: 30px; line-height: 1.2; letter-spacing: 0.12em; }
+.mm-table--3col .pinyin { line-height: 1.2; }
+
+/* --------------------------------------------------------------------------
+   10  Merkkasten (Kap. 9.1) — Rahmen und Weißraum statt Farbfläche
+   -------------------------------------------------------------------------- */
+
+.mm-note {
+  border: 2px solid var(--mm-turquoise);
+  border-radius: var(--mm-radius);
+  background: var(--mm-bg);
+  padding: 32px 40px;
+}
+
+.mm-note h3 {
+  margin: 0 0 16px;
+  color: var(--mm-german-strong);
+  font-size: var(--mm-fs-subtitle);
+  font-weight: 700;
+}
+
+.mm-note ul { margin: 0; padding: 0; list-style: none; }
+
+.mm-note li {
+  position: relative;
+  padding-left: 40px;
+  margin-bottom: 16px;
+}
+
+.mm-note li::before {
+  content: "➪";
+  position: absolute;
+  left: 0;
+  color: var(--mm-german-strong);
+}
+
+/* Knappe Fassung für Begriffsklärungen neben viel Fließtext. */
+.mm-note--knapp { padding: 24px 28px; }
+.mm-note--knapp h3 { margin-bottom: 12px; font-size: var(--mm-fs-body); }
+.mm-note--knapp li { padding-left: 34px; margin-bottom: 10px; font-size: var(--mm-fs-table); }
+.mm-note--knapp li:last-child { margin-bottom: 0; }
+
+/* Noch kleiner: eine Randbemerkung, die neben Bildern steht und diesen
+   möglichst wenig Platz nimmt. Bewusst unter der sonstigen Untergrenze —
+   der Kasten trägt keine tragende Aussage, sondern eine Begriffsklärung. */
+.mm-note--mini { padding: 14px 18px; }
+.mm-note--mini h3 { margin-bottom: 7px; font-size: 21px; line-height: 1.25; }
+.mm-note--mini li {
+  padding-left: 24px;
+  margin-bottom: 7px;
+  font-size: 17px;
+  line-height: 1.35;
+}
+.mm-note--mini li:last-child { margin-bottom: 0; }
+.mm-note--mini .hanzi-inline { font-size: 20px; }
+.mm-note--mini .pinyin       { font-size: inherit; line-height: inherit; }
+
+/* --------------------------------------------------------------------------
+   10a  Großbild — kleine Bilder beim Überfahren groß zeigen.
+
+        In Bildreihen sind die einzelnen Proben zwangsläufig klein. Wer den
+        Cursor darauf führt, bekommt dieselbe Abbildung groß in der Mitte der
+        Inhaltszone. Die Tafel nimmt keine Zeigerereignisse an, damit der
+        Cursor auf dem kleinen Bild bleibt und die Lupe nicht flackert.
+
+        Ausgelöst wird es von jeder Figur mit der Klasse .mm-zoom.
+        Nicht zu verwechseln mit .mm-lupe aus Abschnitt 7b: Die ist eine
+        Miniatur im Textfluss, dies hier eine Tafel über der Folie.
+   -------------------------------------------------------------------------- */
+
+.mm-zoom { cursor: zoom-in; }
+
+.mm-grossbild {
+  position: absolute;
+  left: 50%;
+  /* Mitte der Inhaltszone, nicht Mitte der Folie — sonst läge sie im Titel. */
+  top: calc((var(--mm-content-top) + var(--mm-content-bottom)) / 2);
+  transform: translate(-50%, -50%);
+  z-index: 8;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  max-width: 1680px;
+  border: 2px solid var(--mm-turquoise);
+  border-radius: var(--mm-radius);
+  background: var(--mm-bg);
+  padding: 24px 28px;
+  pointer-events: none;
+}
+
+.mm-grossbild.is-on { display: flex; }
+
+.mm-grossbild img {
+  display: block;
+  /* Feste Höhe statt max-height: Die Proben sind klein, sie sollen
+     tatsächlich wachsen und nicht bei ihrer Naturgröße stehen bleiben.
+     610 px ist der Rest der Inhaltszone nach Rahmen und Unterschrift. */
+  height: 610px;
+  width: auto;
+  max-width: 1620px;
+  object-fit: contain;
+}
+
+.mm-grossbild figcaption {
+  color: var(--mm-german);
+  font-size: var(--mm-fs-body);
+  line-height: var(--mm-lh-de);
+  text-align: center;
+}
+
+.mm-grossbild figcaption .hanzi,
+.mm-grossbild figcaption .pinyin { font-size: inherit; line-height: inherit; }
+
+/* --------------------------------------------------------------------------
+   11  Navigationsleiste — Bedienoberfläche, nicht Folieninhalt.
+      Liegt außerhalb der Bühne und erscheint nicht im PDF-Export.
+   -------------------------------------------------------------------------- */
+
+/* Beide Bedienzeilen — Steuerleiste und Punktleiste — sitzen übereinander in
+   einem gemeinsamen Kasten. Nur so kann die Punktleiste umbrechen, ohne sich
+   über die Steuerleiste zu schieben. */
+/* Über die ganze Fensterbreite und die Kinder darin zentriert — nicht
+   left:50%: Ein solcher Kasten darf nur die halbe Fensterbreite belegen,
+   und die Punktleiste bräche dann schon bei siebzig Folien in zwei Zeilen
+   um. Jede zusätzliche Zeile verkleinert die Folie darüber. */
+.mm-chrome {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  z-index: 10;
+  /* Der Streifen spannt jetzt über das ganze Fenster; Klicks sollen
+     trotzdem nur auf den Schaltflächen selbst landen. */
+  pointer-events: none;
+}
+
+.mm-chrome > * { pointer-events: auto; }
+
+.mm-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  /* Der Rand bleibt frei, damit die Leiste auch bei siebzig Folien und
+     schmalem Fenster nicht aus dem Bild läuft, sondern umbricht. Je flacher
+     die Leiste, desto größer bleibt die Folie darüber. */
+  max-width: calc(100vw - 48px);
+  padding: 4px 12px;
+  opacity: 0.35;
+  transition: opacity 200ms ease;
+}
+
+.mm-nav:hover,
+.mm-nav:focus-within { opacity: 1; }
+
+.mm-nav button {
+  position: relative;
+  width: 9px;
+  height: 9px;
+  padding: 0;
+  border: 1px solid var(--mm-turquoise);
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+}
+
+.mm-nav button[aria-current="true"] { background: var(--mm-turquoise); }
+
+.mm-nav button:focus-visible {
+  outline: 2px solid var(--mm-turquoise-dark);
+  outline-offset: 3px;
+}
+
+/* Folientitel beim Überfahren. Früher hing der Titel als ::after am Punkt
+   selbst — dabei ragte er an den äußeren Punkten über den Fensterrand hinaus
+   und war dort nicht mehr zu lesen. Jetzt gibt es eine einzige Textmarke, die
+   deck.js über dem jeweiligen Punkt platziert und dabei am Rand anschlägt.
+   Kleiner gesetzt als zuvor: 17 px reichen für einen kurzen Titel, ohne die
+   Folie zu verdecken. */
+.mm-navtip {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 12;
+  max-width: min(460px, calc(100vw - 32px));
+  background: var(--mm-bg);
+  border: 1px solid var(--mm-turquoise);
+  border-radius: var(--mm-radius);
+  color: var(--mm-turquoise);
+  font-family: var(--mm-font-latin);
+  font-size: 17px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1.3;
+  padding: 6px 12px;
+  text-align: center;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 150ms ease, visibility 0s linear 150ms;
+}
+
+.mm-navtip.is-on {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 150ms ease, visibility 0s;
+}
+
+/* Die laufende Nummer vor dem Titel — sie macht den Sprung nachvollziehbar. */
+.mm-navtip .nr {
+  display: block;
+  color: var(--mm-german);
+  font-size: 13px;
+  font-weight: 400;
+}
+
+/* --------------------------------------------------------------------------
+   12  Zeiger — der Mauszeiger erscheint als bordeauxroter Punkt.
+
+       Der Punkt ist von Haus aus an; „L“ schaltet ihn ab und gibt den
+       Systemzeiger frei (etwa zum Bedienen des Betriebssystems). Über
+       klickbaren Flächen wächst er zu einem Ring, damit die Schaltflächen
+       trotz fehlendem Systemzeiger erkennbar bleiben.
+   -------------------------------------------------------------------------- */
+
+.mm-laser {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width:  var(--mm-cursor-size);
+  height: var(--mm-cursor-size);
+  margin: calc(var(--mm-cursor-size) / -2) 0 0 calc(var(--mm-cursor-size) / -2);
+  border: 2px solid transparent;
+  border-radius: 50%;
+  background: var(--mm-cursor-color);
+  pointer-events: none;
+  opacity: 1;
+  z-index: 20;
+  transition: width 120ms ease, height 120ms ease, margin 120ms ease,
+              background-color 120ms ease;
+}
+
+/* Über Schaltflächen: größer, bordeauxroter Rand, türkise Füllung. */
+.mm-laser.is-hot {
+  --mm-cursor-size: 34px;
+  background: var(--mm-turquoise);
+  border-width: 3px;
+  border-color: var(--mm-cursor-color);
+}
+
+/* Solange der Punkt an ist, bleibt der Systemzeiger überall verborgen —
+   auch über Schaltflächen, die sonst „pointer“ oder „help“ setzen. */
+body:not(.laser-off),
+body:not(.laser-off) * { cursor: none; }
+
+/* „L“ schaltet den Punkt ab und den Systemzeiger wieder an. */
+body.laser-off              { cursor: auto; }
+body.laser-off .mm-laser    { opacity: 0; }
+
+/* --------------------------------------------------------------------------
+   13  Druck / PDF-Export — jede Folie als eigene Querformatseite (Kap. 6.3)
+   -------------------------------------------------------------------------- */
+
+@media print {
+  @page { size: 297mm 167mm; margin: 0; }
+
+  .mm-nav, .mm-navtip, .mm-laser, .mm-ui { display: none; }
+
+  .mm-deck  { position: static; overflow: visible; }
+  .mm-stage { position: static; transform: none; height: auto; }
+
+  .mm-slide {
+    position: relative;
+    opacity: 1;
+    visibility: visible;
+    height: var(--mm-slide-h);
+    break-after: page;
+  }
+
+  /* Aufdeckkarten offen ausgeben – im PDF gibt es kein Klicken. */
+  .mm-reveal .a    { opacity: 1; }
+  .mm-reveal .hint { display: none; }
+
+  /* Vom Lesekasten bleibt der Kurztext: Er macht das Handout brauchbar,
+     ohne die Folie zu sprengen. Ebene 2 gehört in die Notizendokumente. */
+  .mm-lk-btn,
+  .mm-lk-pop .lk-tief,
+  .mm-lk-pop .lk-begriffe,
+  .mm-lk-pop .lk-hinweis,
+  .mm-lk-pop .lk-mehr { display: none; }
+
+  .mm-lk {
+    position: absolute;
+    left: var(--mm-safe);
+    right: var(--mm-safe);
+    bottom: 60px;
+  }
+
+  .mm-lk-pop {
+    position: static;
+    width: auto;
+    max-height: none;
+    overflow: visible;
+    opacity: 1;
+    visibility: visible;
+    padding: 20px 24px;
+  }
+
+  .mm-lk-pop h3      { font-size: var(--mm-fs-table); margin-bottom: 10px; }
+  .mm-lk-pop .lk-kurz { font-size: 18px; }
+
+  /* Der Rechtevermerk gehört zur Folie und bleibt im Ausdruck stehen. */
+  .mm-copyright { display: block; }
+}
+
+/* --------------------------------------------------------------------------
+   14  Rechtevermerk — steht auf jeder Folie, klein und unaufdringlich.
+       deck.js setzt ihn ein, damit er beim Ergänzen von Folien nicht
+       vergessen wird.
+   -------------------------------------------------------------------------- */
+
+.mm-copyright {
+  position: absolute;
+  right: var(--mm-safe);
+  bottom: 14px;
+  color: #9AA3A6;
+  font-family: var(--mm-font-latin);
+  font-size: 13px;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+}
+
+/* Auf Titel- und Abschlussfolie steht er an derselben Stelle wie sonst —
+   mittig geriete er unter die Punktleiste. */
+
+/* --------------------------------------------------------------------------
+   15  Steuerleiste — Blättern und Rücksprung ins Inhaltsverzeichnis.
+       Bedienoberfläche wie die Punktleiste: außerhalb der Bühne, nicht im
+       PDF-Export.
+   -------------------------------------------------------------------------- */
+
+.mm-ui {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: var(--mm-bg);
+  border: 1px solid var(--mm-rule-light);
+  opacity: 0.75;
+  transition: opacity 200ms ease;
+}
+
+.mm-ui:hover,
+.mm-ui:focus-within { opacity: 1; }
+
+.mm-ui-arrow {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 2px solid var(--mm-turquoise);
+  border-radius: 50%;
+  background: var(--mm-bg);
+  color: var(--mm-turquoise);
+  font-family: var(--mm-font-latin);
+  font-size: 17px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.mm-ui-arrow:hover      { background: var(--mm-turquoise-light); }
+.mm-ui-arrow[disabled]  { opacity: 0.3; cursor: default; }
+
+.mm-ui-btn {
+  border: 2px solid var(--mm-turquoise);
+  border-radius: 999px;
+  background: var(--mm-bg);
+  color: var(--mm-turquoise);
+  font-family: var(--mm-font-latin);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 9px 18px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.mm-ui-btn:hover { background: var(--mm-turquoise-light); }
+
+.mm-ui-arrow:focus-visible,
+.mm-ui-btn:focus-visible {
+  outline: 3px solid var(--mm-turquoise-dark);
+  outline-offset: 3px;
+}
+
+.mm-ui-count {
+  min-width: 92px;
+  text-align: center;
+  color: var(--mm-german);
+  font-family: var(--mm-font-latin);
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------------------------
+   16  Inhaltsverzeichnis — jede Zeile springt auf die erste Folie ihres Akts.
+       Das Ziel steht als data-goto am Eintrag und nennt den data-title der
+       Zielfolie, nicht ihre Nummer: So bleibt das Verzeichnis richtig, wenn
+       Folien dazukommen oder wegfallen.
+   -------------------------------------------------------------------------- */
+
+.mm-toc {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px 28px;
+  height: 100%;
+  align-content: center;
+}
+
+.mm-toc-item {
+  display: grid;
+  grid-template-columns: 54px 1fr;
+  align-items: baseline;
+  gap: 4px 12px;
+  border: 2px solid var(--mm-rule-light);
+  border-radius: var(--mm-radius);
+  background: var(--mm-bg);
+  padding: 14px 18px;
+  text-align: left;
+  font-family: var(--mm-font-latin);
+  cursor: pointer;
+}
+
+.mm-toc-item:hover {
+  border-color: var(--mm-turquoise);
+  background: var(--mm-turquoise-light);
+}
+
+.mm-toc-item:focus-visible {
+  outline: 3px solid var(--mm-turquoise-dark);
+  outline-offset: 3px;
+}
+
+.mm-toc-item .nr {
+  grid-row: 1 / 3;
+  color: var(--mm-turquoise);
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.mm-toc-item .t {
+  color: var(--mm-german-strong);
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.mm-toc-item .s {
+  color: var(--mm-german);
+  font-size: 16px;
+  line-height: 1.3;
+}
+
+.mm-toc-item .s .hanzi,
+.mm-toc-item .s .pinyin { font-size: inherit; line-height: inherit; }
+
+/* --------------------------------------------------------------------------
+   17  Zeitleiste — Marken auf einer Achse, dazu eine Karte je Marke.
+       Die Achse ist nicht maßstäblich: Zwischen Jiǎhú und der Keilschrift
+       liegen dreitausend Jahre, zwischen Regel- und Grasschrift keine
+       hundert. Gezeigt wird die Reihenfolge, nicht der Abstand.
+   -------------------------------------------------------------------------- */
+
+.mm-tl {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.mm-tl-track {
+  position: relative;
+  flex: 0 0 300px;
+}
+
+.mm-tl-track::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 4px;
+  margin-top: -2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg,
+              var(--mm-rule-light) 0%, var(--mm-turquoise) 100%);
+}
+
+/* Pfeilspitze am rechten Ende — die Leiste läuft weiter, sie hört nicht auf. */
+.mm-tl-track::after {
+  content: "";
+  position: absolute;
+  right: -2px;
+  top: 50%;
+  margin-top: -9px;
+  border-left: 16px solid var(--mm-turquoise);
+  border-top: 9px solid transparent;
+  border-bottom: 9px solid transparent;
+}
+
+.mm-tl-mark {
+  position: absolute;
+  left: var(--x);
+  width: 116px;
+  margin-left: -58px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  border: 0;
+  background: none;
+  padding: 0;
+  font-family: var(--mm-font-latin);
+  cursor: pointer;
+}
+
+.mm-tl-mark .punkt {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 3px solid var(--mm-turquoise);
+  background: var(--mm-bg);
+  flex: 0 0 auto;
+}
+
+.mm-tl-mark .stiel {
+  width: 2px;
+  height: var(--stiel, 22px);
+  background: var(--mm-rule-light);
+  flex: 0 0 auto;
+}
+
+.mm-tl-mark .jahr {
+  color: var(--mm-german);
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.mm-tl-mark .name {
+  color: var(--mm-turquoise);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.mm-tl-mark .name .hanzi { font-size: inherit; line-height: inherit; }
+
+/* Oberhalb der Achse steht der Text zuoberst, unterhalb zuunterst — der
+   Punkt liegt in beiden Fällen genau auf der Linie. */
+/* Die Reihenfolge im Dokument ist immer Jahr, Name, Stiel, Punkt. Unterhalb
+   der Achse wird sie umgekehrt, damit der Punkt oben auf der Linie sitzt. */
+.mm-tl-mark--oben  { bottom: 50%; margin-bottom: -8px; }
+.mm-tl-mark--unten { top: 50%; margin-top: -8px; }
+
+.mm-tl-mark--oben  .jahr  { margin-bottom: 3px; }
+.mm-tl-mark--unten .punkt { order: 1; }
+.mm-tl-mark--unten .stiel { order: 2; }
+.mm-tl-mark--unten .name  { order: 3; margin-top: 3px; }
+.mm-tl-mark--unten .jahr  { order: 4; }
+
+.mm-tl-mark:hover .punkt,
+.mm-tl-mark.is-on .punkt { background: var(--mm-turquoise); }
+
+.mm-tl-mark.is-on .name  { color: var(--mm-german-strong); }
+.mm-tl-mark.is-on .stiel { background: var(--mm-turquoise); }
+
+.mm-tl-mark:focus-visible {
+  outline: 3px solid var(--mm-turquoise-dark);
+  outline-offset: 3px;
+  border-radius: var(--mm-radius);
+}
+
+/* Die Karten liegen alle übereinander; sichtbar ist immer nur eine. */
+.mm-tl-cards {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-top: 20px;
+}
+
+.mm-tl-card {
+  position: absolute;
+  inset: 0;
+  /* Marke, Text, Abbildung. Die Abbildung zeigt, wovon der Text spricht —
+     ohne sie bliebe die Zeitachse eine reine Textliste. */
+  display: grid;
+  grid-template-columns: 230px 1fr 360px;
+  gap: 28px;
+  align-items: center;
+  border: 2px solid var(--mm-turquoise);
+  border-radius: var(--mm-radius);
+  background: var(--mm-bg);
+  padding: 24px 32px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--mm-fade) ease, visibility 0s linear var(--mm-fade);
+}
+
+.mm-tl-card.is-on {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity var(--mm-fade) ease, visibility 0s;
+}
+
+.mm-tl-card .marke {
+  text-align: center;
+  border-right: 1px solid var(--mm-rule-light);
+  padding-right: 24px;
+}
+
+/* Nur die eigenen Kinder der Marke stehen auf je einer Zeile. Pinyin und
+   Hanzi innerhalb der Zeitangabe bleiben im Fluss — sonst zerfiele
+   „Jiǎhú, Hénán“ in zwei Zeilen. */
+.mm-tl-card .marke > .hanzi  { display: block; font-size: 54px; line-height: 1.1; }
+.mm-tl-card .marke > .pinyin { display: block; font-size: 22px; }
+.mm-tl-card .marke .zeit     { display: block; margin-top: 6px; color: var(--mm-german); font-size: 18px; }
+
+.mm-tl-card .marke .zeit .hanzi,
+.mm-tl-card .marke .zeit .pinyin { font-size: inherit; line-height: inherit; }
+
+/* Keilschrift, Hieroglyphen und die frühen Alphabete haben auf den meisten
+   Rechnern keinen Font. Wo ein Zeichen nur als Ersatzkästchen erschiene,
+   steht deshalb die Jahreszahl groß an seiner Stelle. */
+.mm-tl-card .marke .jahrgross {
+  display: block;
+  color: var(--mm-turquoise);
+  font-size: 46px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.mm-tl-card h3 {
+  margin: 0 0 10px;
+  color: var(--mm-turquoise);
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.mm-tl-card p {
+  margin: 0;
+  color: var(--mm-german);
+  font-size: 21px;
+  line-height: var(--mm-lh-de);
+}
+
+.mm-tl-card p + p { margin-top: 10px; }
+
+/* Die Abbildung füllt die dritte Spalte, ohne die Karte zu sprengen. */
+.mm-tl-card .bild {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 0;
+}
+
+.mm-tl-card .bild img {
+  display: block;
+  max-width: 100%;
+  max-height: 320px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 4px;
+}
+.mm-tl-card .hanzi, .mm-tl-card p .pinyin { font-size: inherit; line-height: inherit; }
+.mm-tl-card p .pinyin { font-style: italic; }
+.mm-tl-card strong { color: var(--mm-german-strong); }
+
+/* --------------------------------------------------------------------------
+   18  Kategorienweg — die Bildungsarten als Stationen an einem Weg.
+       Die Zusatzerklärung legt sich beim Klick über die Nachbarstation,
+       damit der Weg selbst nicht springt.
+   -------------------------------------------------------------------------- */
+
+.mm-weg {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  height: 100%;
+}
+
+.mm-weg::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 8px;
+  bottom: 8px;
+  width: 10px;
+  margin-left: -5px;
+  border-radius: 5px;
+  background: linear-gradient(180deg,
+              var(--mm-turquoise-light) 0%, var(--mm-turquoise) 100%);
+}
+
+.mm-weg-station {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 132px 1fr;
+  align-items: center;
+}
+
+.mm-weg-knoten {
+  grid-column: 2;
+  width: 84px;
+  height: 84px;
+  margin: 0 auto;
+  border-radius: 50%;
+  border: 4px solid var(--mm-turquoise);
+  background: var(--mm-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+
+.mm-weg-knoten .hanzi { font-size: 38px; line-height: 1; }
+
+.mm-weg-karte {
+  position: relative;
+  border: 2px solid var(--mm-rule-light);
+  border-radius: var(--mm-radius);
+  background: var(--mm-bg);
+  padding: 12px 20px;
+  font-family: var(--mm-font-latin);
+  text-align: left;
+  cursor: pointer;
+}
+
+.mm-weg-station--links  .mm-weg-karte { grid-column: 1; }
+.mm-weg-station--rechts .mm-weg-karte { grid-column: 3; }
+
+.mm-weg-karte:hover {
+  border-color: var(--mm-turquoise);
+  background: var(--mm-turquoise-light);
+}
+
+.mm-weg-karte:focus-visible {
+  outline: 3px solid var(--mm-turquoise-dark);
+  outline-offset: 3px;
+}
+
+.mm-weg-karte .t {
+  display: block;
+  color: var(--mm-german-strong);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.mm-weg-karte .t .pinyin { font-size: inherit; line-height: inherit; }
+
+.mm-weg-karte .k {
+  display: block;
+  margin-top: 4px;
+  color: var(--mm-german);
+  font-size: 17px;
+  line-height: 1.3;
+}
+
+.mm-weg-karte .k .hanzi,
+.mm-weg-karte .k .pinyin { font-size: inherit; line-height: inherit; }
+
+/* Die Vertiefung schwebt über der Folie, nicht im Fluss. Sie trägt links
+   die Erklärung, rechts ein Schaubild — ohne Bild bliebe die Station eine
+   reine Textkarte. */
+.mm-weg-karte .mehr {
+  display: none;
+  position: absolute;
+  left: -2px;
+  right: -2px;
+  top: calc(100% + 6px);
+  z-index: 3;
+  border: 2px solid var(--mm-turquoise);
+  border-radius: var(--mm-radius);
+  background: var(--mm-bg);
+  padding: 14px 20px;
+  color: var(--mm-german);
+  font-size: 17px;
+  line-height: var(--mm-lh-de);
+  text-align: left;
+}
+
+.mm-weg-karte .mehr .abb {
+  display: block;
+  text-align: center;
+}
+
+.mm-weg-karte .mehr .abb img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 160px;
+  object-fit: contain;
+}
+
+.mm-weg-karte .mehr .abb .bu {
+  display: block;
+  margin-top: 6px;
+  font-size: 14px;
+  line-height: 1.3;
+  color: var(--mm-german);
+}
+
+.mm-weg-karte .mehr .abb .bu .hanzi,
+.mm-weg-karte .mehr .abb .bu .pinyin { font-size: inherit; line-height: inherit; }
+
+.mm-weg-karte .mehr .hanzi,
+.mm-weg-karte .mehr .pinyin { font-size: inherit; line-height: inherit; }
+.mm-weg-karte .mehr strong  { color: var(--mm-german-strong); }
+
+.mm-weg-karte.is-open { z-index: 4; border-color: var(--mm-turquoise); }
+
+.mm-weg-karte.is-open .mehr {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 20px;
+  align-items: center;
+}
+
+/* Die unteren Stationen klappen nach oben auf — nach unten ist kein Platz. */
+.mm-weg-station:nth-last-child(-n+2) .mm-weg-karte .mehr {
+  top: auto;
+  bottom: calc(100% + 6px);
+}
+
+/* --------------------------------------------------------------------------
+   19  Aktionsschaltflächen — öffnen ein Dokument oder ein Quiz.
+       Sie führen aus der Präsentation heraus und sind deshalb bewusst
+       größer und deutlicher als die Bedienelemente.
+   -------------------------------------------------------------------------- */
+
+.mm-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px;
+  justify-content: center;
+  align-content: center;
+}
+
+.mm-actions--3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  height: 100%;
+  align-content: center;
+}
+
+/* Untereinander, wenn die Schaltflächen in einer schmalen Spalte stehen. */
+.mm-actions--stapel { flex-direction: column; align-items: stretch; gap: 20px; }
+
+/* Die Nebenbemerkung braucht Abstand zu den Schaltflächen. Zwei Klassen,
+   damit die Regel die allgemeine Abstandsrücksetzung in Abschnitt 4
+   überstimmt. */
+.mm-actions + .mm-caption { margin-top: 26px; }
+
+.mm-action {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border: 2px solid var(--mm-turquoise);
+  border-radius: var(--mm-radius);
+  background: var(--mm-bg);
+  color: var(--mm-turquoise);
+  font-family: var(--mm-font-latin);
+  font-size: 27px;
+  font-weight: 700;
+  line-height: 1.25;
+  text-align: left;
+  text-decoration: none;
+  padding: 24px 28px;
+  cursor: pointer;
+}
+
+.mm-action:hover { background: var(--mm-turquoise-light); }
+
+.mm-action:focus-visible {
+  outline: 3px solid var(--mm-turquoise-dark);
+  outline-offset: 4px;
+}
+
+.mm-action .sub {
+  color: var(--mm-german);
+  font-size: 19px;
+  font-weight: 400;
+  line-height: var(--mm-lh-de);
+}
+
+.mm-action .sub .hanzi,
+.mm-action .sub .pinyin { font-size: inherit; line-height: inherit; }
+
+/* Schwierigkeitsgrad der Quizze: drei Punkte, gefüllt nach Stufe. */
+.mm-action .stufe {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  color: var(--mm-german);
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.mm-action .stufe i {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--mm-turquoise);
+}
+
+.mm-action .stufe i.voll { background: var(--mm-turquoise); }
+
+/* --------------------------------------------------------------------------
+   20  Zusammenfassung — dreispaltige Kurzliste am Ende des Vortrags
+   -------------------------------------------------------------------------- */
+
+/* Drei feste Spalten statt CSS-Mehrspaltensatz: Der Umbruch bliebe sonst
+   dem Browser überlassen, und fragmentierte Listenpunkte hinterlassen dabei
+   leere Aufzählungszeichen. So steht jeder Block dort, wo er hingehört. */
+.mm-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0 48px;
+  height: 100%;
+  align-content: center;
+}
+
+.mm-summary .spalte { min-width: 0; }
+
+.mm-summary h3 {
+  margin: 0 0 8px;
+  color: var(--mm-turquoise);
+  font-size: 22px;
+  font-weight: 700;
+}
+
+/* Auch in der Überschrift folgen Hanzi und Pinyin der Zeilengröße. */
+.mm-summary h3 .hanzi,
+.mm-summary h3 .pinyin { font-size: inherit; line-height: inherit; }
+
+.mm-summary h3 + ul { margin-bottom: 20px; }
+
+.mm-summary ul {
+  margin: 0 0 20px;
+  padding: 0;
+  list-style: none;
+}
+
+.mm-summary li {
+  position: relative;
+  padding-left: 22px;
+  margin-bottom: 6px;
+  color: var(--mm-german);
+  font-size: 17px;
+  line-height: 1.35;
+  break-inside: avoid;
+}
+
+.mm-summary li::before {
+  content: "▪";
+  position: absolute;
+  left: 0;
+  color: var(--mm-turquoise);
+}
+
+.mm-summary li .hanzi,
+.mm-summary li .pinyin { font-size: inherit; line-height: inherit; }

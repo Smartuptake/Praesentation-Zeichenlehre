@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quiz 3 · Mandarin Maverick</title>
+
+<!--
+  Mandarin Maverick – Fast Track Chinese
+  Quiz 3 zur Präsentation „Einführung in die chinesische Zeichenlehre“
+
+  Stufe 3 · schwer. Gefragt wird der Folieninhalt, der Kurztext der
+  Lesekästen und zusätzlich deren Vertiefung samt Schlüsselbegriffen —
+  also beide Ebenen der „zusätzlichen Info“.
+  Aufbau und Auswertung übernimmt quiz.js.
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap">
+<link rel="stylesheet" href="quiz.css">
+</head>
+
+<body>
+
+<header class="q-kopf">
+  <div class="q-kopf-innen">
+    <img src="assets/logo/mm-logo-symbol-color.png" alt="Mandarin Maverick">
+    <div>
+      <h1 id="q-titel"></h1>
+      <p id="q-untertitel"></p>
+      <span class="q-stufe" id="q-stufe"></span>
+    </div>
+    <a class="q-zurueck" href="index.html">← zur Präsentation</a>
+  </div>
+</header>
+
+<main id="q-fragen"></main>
+
+<div class="q-leiste">
+  <div class="q-leiste-innen">
+    <button type="button" class="q-knopf" id="q-auswerten">Auswerten</button>
+    <button type="button" class="q-knopf q-knopf--leer" id="q-neu" hidden>Noch einmal</button>
+    <span class="q-offen" id="q-offen"></span>
+    <span class="q-ergebnis" id="q-ergebnis"></span>
+    <div class="q-balken" id="q-balken"><span></span></div>
+  </div>
+</div>
+
+<script>
+const QUIZ = {
+  titel: 'Quiz 3 · Mit Vertiefung',
+  untertitel: 'Folien, Infokästen und die vertiefenden Informationen.',
+  stufe: 3,
+  fragen: [
+
+    {
+      typ: 'mc',
+      frage: 'Welche Kriterien nennt die Schriftforschung, damit Zeichen als <em>Schrift</em> gelten?',
+      optionen: [
+        'Ein konventionalisierter, begrenzter Zeichenvorrat',
+        'Die feste Bindung an eine bestimmte Sprache',
+        'Die Verkettung von Zeichen zu Reihen (Syntax)',
+        'Die regelhafte Wiederverwendung derselben Zeichen',
+        'Die Verwendung eines dauerhaften Beschreibstoffs'
+      ],
+      richtig: [0, 1, 2, 3],
+      erklaerung: 'Der Beschreibstoff spielt keine Rolle — Schrift steht auf Ton, Knochen, Papyrus und Bildschirm. <span class="pinyin">Jiǎhú</span> erfüllt allenfalls das erste Kriterium ansatzweise.'
+    },
+
+    {
+      typ: 'rf',
+      frage: 'Das ugaritische Alphabet ist nach heutigem Forschungsstand der direkte Vorgänger des phönizischen.',
+      richtig: false,
+      erklaerung: 'Es ist eine <strong>eigenständige Parallelentwicklung</strong>. Der gemeinsame Ursprung liegt in der protosinaitischen Schrift (ca. 1900–1700 v. Chr.).'
+    },
+
+    {
+      typ: 'luecke',
+      frage: 'Der 1799 gefundene Stein von Rosette trägt denselben Text dreimal: hieroglyphisch, demotisch und griechisch.',
+      satz: '1822 gelang damit ___ die Entzifferung der Hieroglyphen.',
+      loesung: ['Champollion', 'Jean-François Champollion', 'Jean Francois Champollion'],
+      erklaerung: 'Die Kenntnis der Hieroglyphen war zuvor 1400 Jahre lang verloren — die letzte datierte Inschrift stammt von 394 n. Chr. aus Philae.'
+    },
+
+    {
+      typ: 'mc',
+      frage: 'Was bezeichnet der Begriff <em>Akrophonie</em>?',
+      optionen: [
+        'Ein Bildzeichen steht für den Anlaut seines Namens — der Rinderkopf <em>ʾalp</em> für /ʾ/',
+        'Ein Zeichen wird nur wegen seines Klanges verwendet, unabhängig von der Bedeutung',
+        'Die Schreibrichtung wechselt zeilenweise hin und her',
+        'Ein Alphabet notiert ausschließlich Konsonanten'
+      ],
+      richtig: [0],
+      erklaerung: 'Die zweite Beschreibung ist das <strong>Rebusprinzip</strong>, die dritte <em>boustrophedon</em>, die vierte ein <strong>Abjad</strong>.'
+    },
+
+    {
+      typ: 'reihenfolge',
+      frage: 'Bringe den Weg des Alphabets in die richtige Reihenfolge.',
+      elemente: [
+        'Protosinaitische Schrift — Sinai und Wadi el-Hol, ca. 1900–1700 v. Chr.',
+        'Phönizisches Abjad — 22 Konsonantenzeichen, ab ca. 1050 v. Chr.',
+        'Griechisches Alphabet — Vokalzeichen kommen dazu, um 800 v. Chr.',
+        'Etruskische Vermittlung',
+        'Lateinisches Alphabet'
+      ],
+      erklaerung: 'Das Ugaritische steht nicht in dieser Kette, sondern daneben: gleiche Wurzel, eigener Zweig.'
+    },
+
+    {
+      typ: 'mc',
+      frage: 'Worin lebt das sumerische Sexagesimalsystem bis heute fort?',
+      optionen: [
+        'In Stunde, Minute und Sekunde',
+        'In der Kreisteilung in 360 Grad',
+        'In der Zählung der chinesischen Radikale',
+        'Im Dezimalsystem der Papyrusrollen'
+      ],
+      richtig: [0, 1],
+      erklaerung: 'Die Sumerer rechneten im Sechzigersystem. Die letzte bekannte Keilschrifttafel datiert um 75 n. Chr.'
+    },
+
+    {
+      typ: 'rf',
+      frage: '1899 erkannte der Gelehrte <span class="pinyin">Wáng Yìróng</span> in „Drachenknochen“ aus einer Apotheke alte Schriftzeichen — so kamen die Orakelknochen ans Licht.',
+      richtig: true,
+      erklaerung: 'Der Fundort ist <span class="hanzi">殷墟</span> <span class="pinyin">Yīnxū</span> bei <span class="pinyin">Ānyáng</span> in <span class="pinyin">Hénán</span>, seit 2006 UNESCO-Welterbe. Über 150.000 beschriftete Fragmente sind bekannt.'
+    },
+
+    {
+      typ: 'luecke',
+      frage: 'Die längste bekannte Bronzeinschrift trägt der <span class="hanzi">毛公鼎</span> <span class="pinyin">Máo Gōng dǐng</span>.',
+      satz: 'Sie umfasst ___ Zeichen.',
+      loesung: ['497'],
+      erklaerung: 'Anders als die knappen Orakelfragen sind Bronzeinschriften oft ausführliche Urkunden — Belehnungen, Landschenkungen, Rechtsfälle.'
+    },
+
+    {
+      typ: 'mc',
+      frage: 'Was besagt die Lehre <span class="hanzi">四体二用</span> <span class="pinyin">sì tǐ èr yòng</span> des Qing-Gelehrten <span class="pinyin">Dài Zhèn</span>?',
+      optionen: [
+        'Nur die ersten vier Kategorien sind Verfahren der Zeichen<strong>bildung</strong>',
+        '<span class="hanzi">假借</span> und <span class="hanzi">转注</span> beschreiben die <strong>Verwendung</strong> vorhandener Zeichen',
+        'Alle sechs Kategorien sind gleichrangige Bildungsverfahren',
+        'Prozentangaben für <span class="hanzi">假借</span> und <span class="hanzi">转注</span> sind deshalb mit Vorsicht zu lesen'
+      ],
+      richtig: [0, 1, 3],
+      erklaerung: '<span class="hanzi">造字法</span> — Zeichenbildung — gegenüber <span class="hanzi">用字法</span> — Zeichenverwendung. Die sechs Kategorien sind ein Ordnungsraster, keine trennscharfen Schubladen.'
+    },
+
+    {
+      typ: 'mc',
+      frage: 'Wie zuverlässig gibt das Phonetikum die Aussprache wieder?',
+      optionen: [
+        'Nur etwa ein Viertel bis ein Drittel trifft Silbe <em>und</em> Ton',
+        'Ohne den Ton steigt die Trefferquote auf rund zwei Drittel',
+        'Über 95 % treffen die Aussprache genau',
+        'Das Phonetikum ist ein Hinweis, keine Garantie'
+      ],
+      richtig: [0, 1, 3],
+      erklaerung: 'Beispiel für die Abweichung: <span class="hanzi">每</span> <span class="pinyin">měi</span> liefert <span class="hanzi">海</span> <span class="pinyin">hǎi</span>, <span class="hanzi">梅</span> <span class="pinyin">méi</span> und <span class="hanzi">敏</span> <span class="pinyin">mǐn</span>.'
+    },
+
+    {
+      typ: 'rf',
+      frage: 'Bei <span class="hanzi">闻</span> <span class="pinyin">wén</span> „hören“ ist <span class="hanzi">耳</span> „Ohr“ der Sinnträger, das Wörterbuchradikal aber <span class="hanzi">门</span> <span class="pinyin">mén</span>.',
+      richtig: true,
+      erklaerung: 'Signifikum und Radikal fallen meist zusammen — aber nicht immer. Hier ist <span class="hanzi">门</span> zugleich das Phonetikum.'
+    },
+
+    {
+      typ: 'zuordnung',
+      frage: 'Ordne jedem Radikal seine verkürzte Form zu, die im zusammengesetzten Zeichen erscheint.',
+      ziele: [
+        '<span class="hanzi">人</span> Mensch',
+        '<span class="hanzi">水</span> Wasser',
+        '<span class="hanzi">手</span> Hand',
+        '<span class="hanzi">心</span> Herz',
+        '<span class="hanzi">火</span> Feuer',
+        '<span class="hanzi">言</span> Sprechen'
+      ],
+      karten: [
+        { text: '<span class="hanzi">亻</span>', ziel: '人 Mensch' },
+        { text: '<span class="hanzi">氵</span>', ziel: '水 Wasser' },
+        { text: '<span class="hanzi">扌</span>', ziel: '手 Hand' },
+        { text: '<span class="hanzi">忄</span>', ziel: '心 Herz' },
+        { text: '<span class="hanzi">灬</span>', ziel: '火 Feuer' },
+        { text: '<span class="hanzi">讠</span>', ziel: '言 Sprechen' }
+      ],
+      erklaerung: 'Diese Formen zu erkennen ist der eigentliche Lernschritt. Beide Formen gehören zu einem Radikal und stehen im Wörterbuch an derselben Stelle.'
+    },
+
+    {
+      typ: 'reihenfolge',
+      frage: 'Die sieben Striche von <span class="hanzi">我</span> <span class="pinyin">wǒ</span> — in welcher Folge werden sie geschrieben?',
+      elemente: [
+        '<span class="pinyin">piě</span> — nach links unten',
+        '<span class="pinyin">héng</span> — waagerecht',
+        '<span class="pinyin">shùgōu</span> — senkrecht mit Haken',
+        '<span class="pinyin">tí</span> — kurz aufsteigend',
+        '<span class="pinyin">xiégōu</span> — die große Schrägfläche mit Haken',
+        '<span class="pinyin">piě</span> — der kleine Strich links',
+        '<span class="pinyin">diǎn</span> — der Punkt oben rechts'
+      ],
+      erklaerung: '<span class="hanzi">我</span> ist der klassische Prüfstein: Wer den Punkt zuerst schreibt, verrät, dass die Regel „kleine Striche und Punkte zuletzt“ noch nicht sitzt.'
+    },
+
+    {
+      typ: 'luecke',
+      frage: 'Die kalligraphische Tradition fasst alle wesentlichen Pinselbewegungen in einem einzigen Zeichen zusammen: <span class="hanzi">永字八法</span>.',
+      satz: 'Das Zeichen ist <span class="hanzi">永</span> ___ „ewig“.',
+      loesung: ['yǒng', 'yong'],
+      erklaerung: 'Wer <span class="hanzi">永</span> beherrscht, hat alle acht Grundstriche geübt — ein klassischer Einstieg in die Kalligraphie.'
+    },
+
+    {
+      typ: 'rf',
+      frage: 'Nach dem Schreiben stellt man den Pinsel mit der Spitze nach oben in ein Gefäß, damit er gerade trocknet.',
+      richtig: false,
+      erklaerung: 'Genau das nicht: Das Wasser liefe in den Schaft und löste die Bindung. Der Pinsel wird ausgewaschen, die Spitze ausgedreht — und <strong>hängend</strong> getrocknet.'
+    },
+
+    {
+      typ: 'mc',
+      frage: 'Was geschah mit der zweiten Vereinfachungsrunde, den <span class="hanzi">二简字</span> <span class="pinyin">èrjiǎnzì</span>?',
+      optionen: [
+        'Sie wurde 1977 veröffentlicht und 1986 offiziell zurückgenommen',
+        'Sie gilt bis heute in der Volksrepublik',
+        'Sie wurde nur in Taiwan eingeführt',
+        'Sie wurde nie veröffentlicht'
+      ],
+      richtig: [0],
+      erklaerung: 'Sie stieß auf breite Ablehnung — ein Hinweis darauf, dass Schriftpolitik an Akzeptanzgrenzen stößt. Seit 2013 fasst die Norm <span class="hanzi">通用规范汉字表</span> den amtlichen Bestand auf 8.105 Zeichen.'
+    }
+
+  ]
+};
+</script>
+<script src="quiz.js"></script>
+
+</body>
+</html>
