@@ -8,6 +8,9 @@
 
    Bedienung: → / ← / Leertaste, Pos1 / Ende, I springt ins Inhalts-
    verzeichnis, L schaltet den roten Cursorpunkt ab bzw. wieder an.
+
+   Die Rednernotizen (Taste N) stehen in rednernotizen.js; sie hängen sich
+   selbst in die Folien ein und räumen selbst wieder auf.
    ========================================================================== */
 
 (function () {
@@ -471,7 +474,7 @@
   if (laser) {
     const KLICKBAR = 'button, a, .mm-reveal, .mm-lk-btn, .lk-mehr, .mm-nav button, ' +
                      '.mm-ui button, .mm-toc-item, .mm-tl-mark, .mm-weg-karte, ' +
-                     '.mm-action, .mm-slide-title.has-lk';
+                     '.mm-action, .mm-rn-btn, .mm-slide-title.has-lk';
 
     document.addEventListener('pointermove', (event) => {
       laser.style.transform = `translate(${event.clientX}px, ${event.clientY}px)`;

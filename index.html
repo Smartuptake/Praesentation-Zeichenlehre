@@ -14,9 +14,16 @@
 
   BEDIENUNG
     → / ← / Leertaste   blättern        L    roter Cursorpunkt aus/an
-    Pos1 / Ende         Anfang / Ende   Esc  Lesekasten schließen
-    I                   Inhaltsverzeichnis
+    Pos1 / Ende         Anfang / Ende   Esc  Kästen schließen
+    I                   Inhaltsverzeichnis  N    Rednernotizen auf/zu
     #n                  Folie n direkt aufrufen
+
+  REDNERNOTIZEN — oben links auf jeder Folie, bordeaux
+    Stichphrasen zu dem, was zu der Folie gesagt werden soll. Sie stehen in
+    rednernotizen.js, mit dem data-title der Folie als Schlüssel, und werden
+    von dort auf jede Folie gesetzt — auch auf jede neu ergänzte. Im PDF-
+    Export erscheinen sie nicht. Achtung: Am Beamer sieht das Publikum sie
+    mit; sie sind ein Blick für den Redner, keine zweite Bildschirmfläche.
 
   Unten am Bildrand liegen zwei Zeilen Bedienoberfläche: die Steuerleiste
   mit „☰ Inhaltsverzeichnis“ und den beiden Pfeilen, darunter die Punkt-
@@ -3136,6 +3143,9 @@
 <div class="mm-laser" id="mm-laser" aria-hidden="true"></div>
 
 <script src="deck.js"></script>
+<!-- Setzt auf jeder Folie den Knopf „Rednernotizen“ ein. Nach deck.js, weil
+     die Folien zu diesem Zeitpunkt bereits stehen. -->
+<script src="rednernotizen.js"></script>
 
 </body>
 </html>

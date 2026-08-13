@@ -1178,6 +1178,153 @@ html, body {
 }
 
 /* --------------------------------------------------------------------------
+   8a  Rednernotizen — der Spickzettel des Vortragenden.
+
+       Der Lesekasten aus Abschnitt 8 richtet sich an das Publikum: Er
+       vertieft, was auf der Folie steht. Dieser Kasten richtet sich an den
+       Redner und sagt, was zu der Folie gesprochen werden soll. Weil beides
+       nicht zu verwechseln sein darf, unterscheiden sie sich in allem:
+
+         Lesekasten      türkis, oben rechts, öffnet auch beim Überfahren
+         Rednernotizen   bordeaux, oben links, nur auf Klick oder Taste N
+
+       Oben links ist auf jeder Folie Platz: Die Bildmarke endet bei 64 px,
+       die Titelzone beginnt erst bei 80 px Höhe. Der Knopf sitzt in diesem
+       Streifen und lässt Titel- wie Inhaltszone unangetastet.
+
+       Auslöser und Kasten setzt rednernotizen.js ein — so trägt jede Folie
+       sie, auch jede neu ergänzte.
+   -------------------------------------------------------------------------- */
+
+.mm-rn {
+  position: absolute;
+  left: 88px;                 /* rechts neben der Bildmarke (24 px + 40 px) */
+  top: 33px;                  /* mittig zur Bildmarke: 24 + 54/2 − 36/2 */
+  /* Über dem Lesekasten (5): Steht dessen Tafel offen, muss der Redner
+     trotzdem an seine Notizen herankommen. */
+  z-index: 7;
+}
+
+/* Zurückhaltend wie der Lesekastenknopf, aber in Bordeaux — der Farbe des
+   Bildschirmwerkzeugs (Abschnitt 12), nicht der Folieninhalte. */
+.mm-rn-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  height: 36px;
+  border: 2px solid var(--mm-bordeaux);
+  border-radius: var(--mm-radius);
+  background: var(--mm-bg);
+  color: var(--mm-bordeaux);
+  font-family: var(--mm-font-latin);
+  font-size: 18px;
+  line-height: 1;
+  padding: 0 16px;
+  cursor: pointer;
+  opacity: 0.72;
+  transition: opacity 200ms ease;
+}
+
+/* Im Ruhezustand blass: Der Knopf steht auf jeder Folie und soll das Bild
+   nicht mittragen. Unter dem Cursor tritt er hervor. */
+.mm-rn-btn:hover,
+.mm-rn-btn:focus-visible,
+.mm-rn.is-open .mm-rn-btn { opacity: 1; }
+
+.mm-rn.is-open .mm-rn-btn { background: #F7ECEC; }
+
+.mm-rn-btn::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--mm-bordeaux);
+}
+
+.mm-rn-btn:focus-visible {
+  outline: 3px solid var(--mm-bordeaux);
+  outline-offset: 4px;
+}
+
+/* Die Tafel. Rahmen und Weißraum statt Schatten (Kap. 9.1). Sie beginnt bei
+   ~83 px und reicht höchstens bis 983 px — die Fußzeile bleibt frei. */
+.mm-rn-pop {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 14px);
+  width: 1180px;
+  max-height: 900px;
+  overflow-y: auto;
+  border: 2px solid var(--mm-bordeaux);
+  border-radius: var(--mm-radius);
+  background: var(--mm-bg);
+  padding: 30px 36px;
+  text-align: left;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--mm-fade) ease, visibility 0s linear var(--mm-fade);
+}
+
+/* Anders als der Lesekasten öffnet er nicht beim Überfahren: Ein Kasten,
+   der beim Queren der Folie aufspringt, verdeckte im Vortrag den Inhalt. */
+.mm-rn.is-open .mm-rn-pop {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity var(--mm-fade) ease, visibility 0s;
+}
+
+.mm-rn-pop h3 {
+  margin: 0 0 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--mm-rule-light);
+  color: var(--mm-bordeaux);
+  font-size: 26px;
+  font-weight: 700;
+  line-height: var(--mm-lh-de);
+}
+
+/* Spiegelstriche statt Punkte — die Notizen sind Stichphrasen, keine
+   Aufzählung von Folieninhalten. */
+.mm-rn-pop ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mm-rn-pop li {
+  position: relative;
+  padding-left: 28px;
+  color: var(--mm-german-strong);
+  font-size: 25px;
+  line-height: var(--mm-lh-de);
+}
+
+.mm-rn-pop li + li { margin-top: 14px; }
+
+.mm-rn-pop li::before {
+  content: "–";
+  position: absolute;
+  left: 0;
+  color: var(--mm-bordeaux);
+}
+
+/* Hanzi und Pinyin behalten ihre Farbe, folgen aber der Zeilengröße —
+   sonst zerrisse die Stichphrase. */
+.mm-rn-pop .hanzi  { font-size: inherit; line-height: inherit; }
+.mm-rn-pop .pinyin { font-size: inherit; line-height: inherit; font-style: italic; }
+
+.mm-rn-pop .rn-leer {
+  margin: 0;
+  color: var(--mm-german);
+  font-size: 22px;
+  line-height: var(--mm-lh-de);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mm-rn-pop { transition-duration: 0s; }
+}
+
+/* --------------------------------------------------------------------------
    9  Tabellen (Kap. 8.1) — weiße Zellen, dünne graue Linien, keine Zebrastreifen
    -------------------------------------------------------------------------- */
 
@@ -1512,6 +1659,10 @@ body.laser-off .mm-laser    { opacity: 0; }
   /* Aufdeckkarten offen ausgeben – im PDF gibt es kein Klicken. */
   .mm-reveal .a    { opacity: 1; }
   .mm-reveal .hint { display: none; }
+
+  /* Die Rednernotizen bleiben draußen: Das PDF ist das Handout fürs
+     Publikum, der Spickzettel gehört dem Vortragenden. */
+  .mm-rn { display: none; }
 
   /* Vom Lesekasten bleibt der Kurztext: Er macht das Handout brauchbar,
      ohne die Folie zu sprengen. Ebene 2 gehört in die Notizendokumente. */
