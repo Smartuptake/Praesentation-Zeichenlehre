@@ -402,16 +402,13 @@ const NOTIZEN = {
     "Grundrichtung: erst waagerecht, dann senkrecht — 十 · erst 撇, dann 捺 — 人",
     "Gliederung: von oben nach unten, von links nach rechts — 三 · 你",
     "Rahmen: erst außen, dann innen, zuletzt schließen — 国",
+    "Bild vom Haus: erst die Mauern, dann das Haus hinein, zuletzt das Tor (先里头后封口) — 国 vorführen",
+    "Gegenfälle: Rahmen nach unten offen (月 风 同) außen zuerst · nach oben offen (凶 这 道) innen zuerst",
     "Mitte und Punkte: erst die Mitte, dann die Seiten — 小 · Punkt oben rechts zuletzt — 我",
-    "Beruhigen: die Regeln folgen der natürlichen Handbewegung, sie sind nicht willkürlich"
+    "Beruhigen: die Regeln folgen der natürlichen Handbewegung, sie sind nicht willkürlich",
+    "Die Tafel rechts abfotografieren lassen — sie taucht im Übungsblatt und im Reader wieder auf"
   ],
 
-  "Die 7 Grundregeln": [
-    "Die Merktafel — hier steht alles zusammengefasst",
-    "Die sieben Regeln laut durchzählen lassen",
-    "Empfehlung: diese Tafel abfotografieren, sie ersetzt langes Nachlesen",
-    "Hinweis: sie taucht im Übungsblatt und im Reader wieder auf"
-  ],
 
   "Strichfolge selbst prüfen": [
     "Praktischer Teil: die Strichfolge lässt sich zu jedem Zeichen animiert abrufen",
@@ -485,14 +482,6 @@ const NOTIZEN = {
     "Merksatz: Die Strichfolge ist kein Ritual, sondern eine Technik"
   ],
 
-  "Grundregeln der Strichfolge II": [
-    "Das Bild vom Haus benutzen: erst die Mauern, dann das Haus hinein, zuletzt das Tor",
-    "先里头后封口 xiān lǐtou hòu fēngkǒu — am Zeichen 国 Schritt für Schritt vorführen",
-    "Reihenfolge: linke Senkrechte, oberer und rechter Rand in einem Zug, Inhalt 玉, dann der Abschlussstrich",
-    "Gegenfälle zeigen: Rahmen nach unten offen (月 风 同) — außen zuerst",
-    "Rahmen nach oben offen (凶 这 道) — innen zuerst",
-    "Alle mitschreiben lassen, in der Luft oder auf Papier"
-  ],
 
   "Die Grundstriche und ihre Namen": [
     "永字八法 yǒngzì bāfǎ — die acht Prinzipien im Zeichen 永",
