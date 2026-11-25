@@ -2362,3 +2362,111 @@ body.laser-off .mm-laser    { opacity: 0; }
 
 .mm-summary li .hanzi,
 .mm-summary li .pinyin { font-size: inherit; line-height: inherit; }
+
+/* --------------------------------------------------------------------------
+   14  Rednerfenster (rednerfenster.js) — Referentenansicht auf dem Laptop
+   -------------------------------------------------------------------------- */
+
+/* Hauptfenster: Ist das Rednerfenster offen, sieht das Publikum den
+   Notizknopf nicht mehr. */
+body.mm-rf-verbunden .mm-rn { display: none; }
+
+body.mm-rf .mm-deck,
+body.mm-rf .mm-chrome,
+body.mm-rf .mm-navtip,
+body.mm-rf .mm-laser { display: none; }
+
+body.mm-rf { background: #F4F6F7; overflow: hidden; }
+
+.rf {
+  --rf-notiz: 26px;
+  position: fixed;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 58fr 42fr;
+  grid-template-rows: auto 1fr;
+  gap: 16px 22px;
+  padding: 16px 22px 18px;
+  font-family: var(--mm-font-latin);
+  color: var(--mm-german-strong);
+}
+
+.rf-kopf {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  font-size: 20px;
+}
+.rf-nr    { color: var(--mm-turquoise); font-weight: 700; white-space: nowrap; }
+.rf-titel { flex: 1; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rf-uhr   { color: var(--mm-german); font-variant-numeric: tabular-nums; }
+.rf-zeit  { font-size: 30px; font-weight: 700; color: var(--mm-bordeaux);
+            font-variant-numeric: tabular-nums; min-width: 90px; text-align: right; }
+
+.rf-links, .rf-rechts { display: flex; flex-direction: column; gap: 8px; min-height: 0; }
+
+.rf-label {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 15px; font-weight: 700; letter-spacing: .04em;
+  text-transform: uppercase; color: var(--mm-german);
+}
+.rf-label-notiz { margin-top: 10px; }
+
+.rf-bild {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #fff;
+  border: 2px solid var(--mm-rule-light);
+  border-radius: 10px;
+  flex: none;
+}
+.rf-jetzt { border-color: var(--mm-turquoise); }
+.rf-naechste { width: 72%; }
+.rf-bild.is-leer {
+  display: flex; align-items: center; justify-content: center;
+  color: var(--mm-german); font-size: 18px;
+}
+.rf-innen {
+  position: absolute; left: 0; top: 0;
+  width: var(--mm-slide-w); height: var(--mm-slide-h);
+  transform-origin: 0 0;
+  pointer-events: none;
+}
+.rf-innen .mm-slide { transition: none; }
+.rf-innen .mm-rn, .rf-innen .mm-grossbild { display: none; }
+
+.rf-steuer { display: flex; align-items: center; gap: 12px; margin-top: 6px; }
+.rf-hinweis { font-size: 14px; color: var(--mm-german); }
+
+.rf-btn {
+  font: inherit; font-size: 16px; font-weight: 700;
+  padding: 8px 16px;
+  border: 2px solid var(--mm-turquoise);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--mm-turquoise-dark);
+  cursor: pointer;
+}
+.rf-btn:hover { background: var(--mm-turquoise-light); }
+.rf-btn:disabled { opacity: .35; cursor: default; }
+.rf-groesse .rf-btn { padding: 3px 10px; font-size: 14px; text-transform: none; }
+
+.rf-notizen {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  background: #fff;
+  border-left: 6px solid var(--mm-bordeaux);
+  border-radius: 10px;
+  padding: 14px 22px;
+  font-size: var(--rf-notiz);
+  line-height: 1.4;
+}
+.rf-notizen ul { margin: 0; padding-left: 1.1em; }
+.rf-notizen li { margin: 0 0 .55em; }
+.rf-notizen .hanzi, .rf-notizen .pinyin { font-size: inherit; line-height: inherit; }
+
+@media print { .rf { display: none; } }

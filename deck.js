@@ -9,6 +9,8 @@
    Bedienung: → / ← / Leertaste, Pos1 / Ende, I springt ins Inhalts-
    verzeichnis, L schaltet den roten Cursorpunkt ab bzw. wieder an.
 
+   Taste R öffnet das Rednerfenster (rednerfenster.js).
+
    Die Rednernotizen (Taste N) stehen in rednernotizen.js; sie hängen sich
    selbst in die Folien ein und räumen selbst wieder auf.
    ========================================================================== */
@@ -166,7 +168,11 @@
     if (tocBtn)   tocBtn.disabled = index === tocIndex;
 
     location.hash = index === 0 ? '' : `#${index + 1}`;
+
+    /* Für rednerfenster.js: Folienwechsel melden. */
+    document.dispatchEvent(new CustomEvent('mm-folie', { detail: { index } }));
   }
+  window.mmZeige = show;
 
   if (prevBtn) prevBtn.addEventListener('click', () => show(index - 1));
   if (nextBtn) nextBtn.addEventListener('click', () => show(index + 1));
