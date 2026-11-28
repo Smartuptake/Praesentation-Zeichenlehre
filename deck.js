@@ -248,10 +248,10 @@
       const hinweis = document.createElement('p');
       hinweis.className = 'lk-hinweis';
       hinweis.innerHTML = mehr
-        ? '<b>1. Klick</b> auf „zusätzliche Info“ öffnet den Kasten, ' +
-          '<b>2. Klick</b> schließt ihn wieder — ebenso die Vertiefung unten.'
-        : '<b>1. Klick</b> auf „zusätzliche Info“ öffnet den Kasten, ' +
-          '<b>2. Klick</b> schließt ihn wieder.';
+        ? 'Schließen mit „× Schließen“ oben rechts, einem zweiten Klick auf ' +
+          '„zusätzliche Info“ oder Esc — die Vertiefung öffnet und schließt unten.'
+        : 'Schließen mit „× Schließen“ oben rechts, einem zweiten Klick auf ' +
+          '„zusätzliche Info“ oder Esc.';
       const h3 = pop.querySelector('h3');
       if (h3) h3.after(hinweis); else pop.prepend(hinweis);
     }
@@ -291,40 +291,22 @@
       });
     }
 
-    /* Nachlauf: Der Kasten bleibt kurz stehen, wenn der Cursor ihn verlässt.
-       Sonst fällt er beim Queren des Spalts zwischen Schaltfläche und Kasten
-       zu, und der Hinweis unten links wäre nicht erreichbar. */
-    let timer = null;
-    lk.addEventListener('mouseenter', () => {
-      clearTimeout(timer);
-      lk.classList.add('is-hover');
-    });
-    lk.addEventListener('mouseleave', () => {
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        if (!lk.classList.contains('is-open')) lk.classList.remove('is-hover');
-      }, HOVER_NACHLAUF);
-    });
-
-    /* Tastaturweg: Fokus zeigt Ebene 1 genau wie der Cursor. */
-    lk.addEventListener('focusin',  () => lk.classList.add('is-hover'));
-    lk.addEventListener('focusout', () => {
-      if (!lk.classList.contains('is-open')) lk.classList.remove('is-hover');
+    /* Seit 28.11.2026 öffnet der Kasten nur noch per Klick — kein
+       Aufspringen beim Überfahren. Im Kasten steht oben rechts ein
+       Schließknopf. */
+    const zu = document.createElement('button');
+    zu.type = 'button';
+    zu.className = 'lk-zu';
+    zu.textContent = '× Schließen';
+    pop.prepend(zu);
+    zu.addEventListener('click', (event) => {
+      event.stopPropagation();
+      setOpen(false);
     });
 
     const title = lk.closest('.mm-slide').querySelector('.mm-slide-title');
     if (title) {
       title.classList.add('has-lk');
-      title.addEventListener('mouseenter', () => {
-        clearTimeout(timer);
-        lk.classList.add('is-hover');
-      });
-      title.addEventListener('mouseleave', () => {
-        clearTimeout(timer);
-        timer = setTimeout(() => {
-          if (!lk.classList.contains('is-open')) lk.classList.remove('is-hover');
-        }, HOVER_NACHLAUF);
-      });
       /* Der Titel ist auch ein Schalter: Klick hält den Kasten fest. */
       title.addEventListener('click', () => {
         setOpen(!lk.classList.contains('is-open'));

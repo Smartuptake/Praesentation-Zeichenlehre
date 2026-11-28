@@ -1029,8 +1029,9 @@ html, body {
   transition: opacity var(--mm-fade) ease, visibility 0s linear var(--mm-fade);
 }
 
-.mm-lk:hover .mm-lk-pop,
-.mm-lk.is-hover .mm-lk-pop,
+/* Seit 28.11.2026 nur noch per Klick (Stefan: Aufspringen beim Überfahren
+   wirkt unprofessionell). Geschlossen wird mit „× Schließen“ im Kasten,
+   einem zweiten Klick auf den Auslöser oder Esc. */
 .mm-lk.is-open .mm-lk-pop {
   opacity: 1;
   visibility: visible;
@@ -1252,7 +1253,7 @@ html, body {
   position: absolute;
   left: 0;
   top: calc(100% + 14px);
-  width: 1180px;
+  width: 1640px;
   max-height: 900px;
   overflow-y: auto;
   border: 2px solid var(--mm-bordeaux);
@@ -1295,11 +1296,11 @@ html, body {
   position: relative;
   padding-left: 28px;
   color: var(--mm-german-strong);
-  font-size: 25px;
-  line-height: var(--mm-lh-de);
+  font-size: 23px;
+  line-height: 1.38;
 }
 
-.mm-rn-pop li + li { margin-top: 14px; }
+.mm-rn-pop li + li { margin-top: 12px; }
 
 .mm-rn-pop li::before {
   content: "–";
@@ -2470,3 +2471,132 @@ body.mm-rf { background: #F4F6F7; overflow: hidden; }
 .rf-notizen .hanzi, .rf-notizen .pinyin { font-size: inherit; line-height: inherit; }
 
 @media print { .rf { display: none; } }
+
+
+/* --------------------------------------------------------------------------
+   13  Zusatzbausteine (28.11.2026) — zusatz.js
+   -------------------------------------------------------------------------- */
+
+/* Schließknopf im Lesekasten (von deck.js eingesetzt) */
+.mm-lk-pop .lk-zu,
+.mm-ov-zu {
+  float: right;
+  margin: -8px -8px 12px 24px;
+  border: 2px solid currentColor;
+  border-radius: var(--mm-radius);
+  background: var(--mm-bg);
+  font-family: var(--mm-font-latin);
+  font-size: 22px;
+  line-height: 1;
+  padding: 10px 16px;
+  cursor: pointer;
+}
+.mm-lk-pop .lk-zu { color: var(--mm-turquoise); }
+.mm-ov-zu { color: var(--mm-bordeaux); }
+.mm-lk-pop .lk-zu:hover, .mm-ov-zu:hover { background: var(--mm-turquoise-light); }
+
+/* 1  Klickfenster */
+.mm-ov-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  margin-top: 28px;
+  border: 2px solid var(--mm-turquoise); border-radius: var(--mm-radius);
+  background: var(--mm-bg); color: var(--mm-turquoise);
+  font-family: var(--mm-font-latin); font-size: 24px; line-height: 1;
+  padding: 12px 20px; cursor: pointer;
+}
+.mm-ov-btn::before { content: "▸"; }
+.mm-ov-btn[aria-expanded="true"] { background: var(--mm-turquoise-light); }
+.mm-ov {
+  position: absolute; inset: 0; z-index: 6;
+  background: rgba(255,255,255,.82);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; visibility: hidden;
+  transition: opacity var(--mm-fade) ease, visibility 0s linear var(--mm-fade);
+}
+.mm-ov.is-open { opacity: 1; visibility: visible; transition: opacity var(--mm-fade) ease, visibility 0s; }
+.mm-ov-box {
+  max-width: 1760px; max-height: 960px; overflow: auto;
+  border: 2px solid var(--mm-turquoise); border-radius: var(--mm-radius);
+  background: var(--mm-bg); padding: 30px 36px;
+}
+.mm-ov-box h3 { margin: 0 0 18px; color: var(--mm-turquoise); font-size: 32px; }
+.mm-ov-reihe { display: flex; gap: 32px; align-items: flex-start; }
+.mm-ov-reihe figure { margin: 0; flex: 1; }
+.mm-ov-reihe img { width: 100%; height: auto; display: block; }
+.mm-ov-reihe figcaption { font-size: 22px; color: var(--mm-german); margin-top: 10px; }
+
+/* 2  Bildzonen */
+.mm-hot { position: relative; display: inline-block; }
+.mm-hot img { display: block; }
+.mm-hot-zone {
+  position: absolute; top: 0; bottom: 0;
+  cursor: pointer; outline: none;
+  border: 3px solid transparent; border-radius: 6px;
+}
+.mm-hot-zone:hover, .mm-hot-zone:focus-visible, .mm-hot-zone.is-on { border-color: var(--mm-turquoise); }
+.mm-hot-tip {
+  position: absolute; left: 50%; top: calc(100% + 12px); transform: translateX(-50%);
+  width: 360px; z-index: 4;
+  border: 2px solid var(--mm-turquoise); border-radius: var(--mm-radius);
+  background: var(--mm-bg); padding: 14px 18px;
+  font-family: var(--mm-font-latin); font-size: 22px; line-height: 1.35; color: var(--mm-german-strong);
+  opacity: 0; visibility: hidden; pointer-events: none;
+}
+.mm-hot-tip b { display: block; color: var(--mm-turquoise); font-size: 24px; margin-bottom: 4px; }
+.mm-hot-zone:hover .mm-hot-tip, .mm-hot-zone:focus-visible .mm-hot-tip, .mm-hot-zone.is-on .mm-hot-tip {
+  opacity: 1; visibility: visible;
+}
+
+/* 3  Zerlegung der Beispielzeichen */
+.mm-zl { position: relative; cursor: pointer; border-bottom: 2px dotted var(--mm-turquoise); outline: none; }
+.mm-zl-pop {
+  position: absolute; right: 0; bottom: calc(100% + 10px); z-index: 4;
+  width: 560px; text-align: left; white-space: normal;
+  border: 2px solid var(--mm-turquoise); border-radius: var(--mm-radius);
+  background: var(--mm-bg); padding: 18px 22px;
+  font-family: var(--mm-font-latin); font-size: 21px; line-height: 1.35; color: var(--mm-german-strong);
+  letter-spacing: normal; font-weight: 400;
+  opacity: 0; visibility: hidden; pointer-events: none;
+}
+.mm-zl-pop .hanzi { font-family: var(--mm-font-hanzi); font-size: 1.15em; }
+.mm-zl:hover .mm-zl-pop, .mm-zl:focus-visible .mm-zl-pop, .mm-zl.is-on .mm-zl-pop { opacity: 1; visibility: visible; }
+.mm-zl-pop p { margin: 6px 0 0; }
+.mm-zl-pop .zl-kopf { color: var(--mm-german); }
+.mm-zl-pop .pinyin { font-size: inherit; font-style: italic; }
+.mm-zl-pop .zl-formel { font-family: var(--mm-font-hanzi); font-size: 54px; line-height: 1.25; color: var(--mm-german-strong); margin: 6px 0; }
+.mm-zl-pop .zl-gross { color: var(--mm-hanzi); font-size: 72px; }
+.mm-zl-pop .zl-sig, .mm-zl-pop .zl-sig-t { color: var(--mm-correct); }
+.mm-zl-pop .zl-phon, .mm-zl-pop .zl-phon-t { color: var(--mm-pinyin); }
+.mm-zl-pop .zl-sig-t, .mm-zl-pop .zl-phon-t { font-weight: 700; }
+.mm-zl-pop .zl-hin { color: var(--mm-german); font-size: 19px; }
+
+/* Bauprinzip-Reihe (Folie „Phonogramme 形声“) */
+.mm-bau { display: grid; grid-template-columns: repeat(5, 1fr); gap: 24px; margin-top: 40px; }
+.mm-bau > div { border: 2px solid var(--mm-rule-light); border-radius: var(--mm-radius); padding: 18px; text-align: center; }
+.mm-bau .z { font-family: var(--mm-font-hanzi); font-size: 92px; line-height: 1.1; color: var(--mm-hanzi); }
+.mm-bau .f { font-family: var(--mm-font-hanzi); font-size: 44px; }
+.mm-bau .s { color: var(--mm-correct); } .mm-bau .l { color: var(--mm-pinyin); }
+.mm-bau .t { font-size: 21px; color: var(--mm-german); line-height: 1.35; margin-top: 6px; }
+.mm-bau-legende { font-size: 22px; color: var(--mm-german); margin-top: 18px; }
+.mm-bau-legende .s { color: var(--mm-correct); font-weight: 700; } .mm-bau-legende .l { color: var(--mm-pinyin); font-weight: 700; }
+
+/* kleine Erläuterung in Aufdeckkarten */
+.mm-reveal .a .klein { display: block; font-size: 19px; line-height: 1.3; color: var(--mm-german); margin-top: 8px; }
+
+/* HSK-Materialfolie */
+.mm-hsk { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; }
+.mm-hsk > a {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  border: 2px solid var(--mm-rule-light); border-radius: var(--mm-radius); padding: 20px 18px 22px;
+  color: inherit; text-decoration: none;
+}
+.mm-hsk > a:hover { border-color: var(--mm-turquoise); }
+.mm-hsk .bild { width: 100%; height: 250px; object-fit: cover; object-position: top; border: 1px solid var(--mm-rule-light); border-radius: 4px; }
+.mm-hsk h3 { margin: 16px 0 4px; font-size: 30px; color: var(--mm-turquoise); }
+.mm-hsk .was { font-size: 20px; line-height: 1.35; color: var(--mm-german); min-height: 54px; }
+.mm-hsk .qr { width: 190px; height: 190px; margin-top: 12px; image-rendering: pixelated; }
+.mm-hsk .knopf {
+  margin-top: 12px; border: 2px solid var(--mm-turquoise); border-radius: var(--mm-radius);
+  color: var(--mm-turquoise); font-size: 21px; padding: 8px 16px;
+}
+.mm-hsk-fuss { margin-top: 22px; font-size: 21px; color: var(--mm-german); text-align: center; }
